@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <AssemblyName>StudioLE.Example</AssemblyName>
+    <AssemblyName>Surveyor</AssemblyName>
     <Description>This is an example project executable.</Description>
   </PropertyGroup>
 

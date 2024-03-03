@@ -1,3 +1,1 @@
-using StudioLE.Example;
-
-ExampleHelpers.WriteToConsole("Hello, world!");
+Console.WriteLine("Hello, World!");

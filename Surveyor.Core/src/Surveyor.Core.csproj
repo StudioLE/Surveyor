@@ -1,11 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Use consistent properties across all projects -->
+  <Import Project="../../Global.props"/>
+
   <PropertyGroup>
-    <RootNamespace>StudioLE.Example</RootNamespace>
+    <RootNamespace>Surveyor</RootNamespace>
     <Description>This is an example project library.</Description>
   </PropertyGroup>
 
-  <!-- Use consistent properties across all projects -->
-  <Import Project="../../Global.props"/>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="System.Text.Json" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>
