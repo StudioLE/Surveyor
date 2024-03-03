@@ -19,7 +19,7 @@ namespace Surveyor.Utils.Versioning;
 /// 1.0.0-alpha.1
 /// </example>
 /// <seealso href="https://semver.org/spec/v2.0.0.html"/>
-public readonly record struct SemanticVersion()
+public readonly record struct SemanticVersion() : IComparable<SemanticVersion>
 {
     /// <seealso href="https://semver.org/spec/v2.0.0.html#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string"/>
     private const string Pattern = "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
@@ -81,5 +81,53 @@ public readonly record struct SemanticVersion()
             PreRelease = match.Groups[4].Value,
             Build = match.Groups[5].Value
         };
+    }
+
+    /// <inheritdoc />
+    public int CompareTo(SemanticVersion other)
+    {
+        int majorComparison = Major.CompareTo(other.Major);
+        if (majorComparison != 0)
+            return majorComparison;
+        int minorComparison = Minor.CompareTo(other.Minor);
+        if (minorComparison != 0)
+            return minorComparison;
+        int patchComparison = Patch.CompareTo(other.Patch);
+        if (patchComparison != 0)
+            return patchComparison;
+        int preReleaseComparison = Compare(PreRelease, other.PreRelease);
+        if (preReleaseComparison != 0)
+            return preReleaseComparison;
+        return Compare(Build, other.Build);
+    }
+
+    private static int Compare(string left, string right)
+    {
+        if (left == right)
+            return 0;
+        if (left == string.Empty)
+            return 1;
+        if (right == string.Empty)
+            return -1;
+        // TODO: Split the string by . and compare each part
+        string[] leftComponents = left.Split('.');
+        string[] rightComponents = right.Split('.');
+        for (int i = 0; i < leftComponents.Length; i++)
+        {
+            // If the left side is longer then it is greater
+            if (i >= rightComponents.Length)
+                return 1;
+            int comparison = CompareStringAsInt(leftComponents[i], rightComponents[i]);
+            if (comparison != 0)
+                return comparison;
+        }
+        return -1;
+    }
+
+    private static int CompareStringAsInt(string? left, string? right)
+    {
+        if(int.TryParse(left, out int leftInt) && int.TryParse(right, out int rightInt))
+            return leftInt.CompareTo(rightInt);
+        return string.Compare(left, right, StringComparison.InvariantCulture);
     }
 }
