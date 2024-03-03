@@ -21,17 +21,24 @@ public class PackagesApi
     /// <summary>
     /// Creates a new instance of <see cref="PackagesApi"/>.
     /// </summary>
-    public PackagesApi(IOptions<PackagesApiOptions> options)
+    public PackagesApi(PackagesApiOptions options)
     {
         _http = new()
         {
-            BaseAddress = new(options.Value.BaseAddress),
+            BaseAddress = new(options.BaseAddress),
             DefaultRequestHeaders =
             {
                 Accept = { new("application/json") },
-                Authorization = new(options.Value.AuthToken)
+                Authorization = new(options.AuthToken)
             }
         };
+    }
+
+    /// <summary>
+    /// DI constructor for <see cref="PackagesApi"/>.
+    /// </summary>
+    public PackagesApi(IOptions<PackagesApiOptions> options) : this(options.Value)
+    {
     }
 
     /// <summary>
