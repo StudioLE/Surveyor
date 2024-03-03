@@ -89,7 +89,9 @@ internal class SemanticVersionTests
             "1.0.0-beta.2",
             "1.0.0-beta.11",
             "1.0.0-beta.21",
+            "1.0.0-rc.1+hello",
             "1.0.0-rc.1",
+            "1.0.0+hello",
             "1.0.0",
             "2.0.0",
             "3.0.0"
