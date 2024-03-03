@@ -11,7 +11,6 @@ jobs:
     with:
       project: ""
       os: ubuntu-latest
-      run: ./Illuminate.Generation.DocFx/samples/clone-sample-repo
     secrets: inherit
 
   test-windows:
