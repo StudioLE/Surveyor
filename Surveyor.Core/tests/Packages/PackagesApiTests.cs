@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 using Surveyor.Packages;
+using Surveyor.Utils.Versioning;
 
 namespace Surveyor.Core.Tests.Packages;
 
@@ -26,7 +27,7 @@ internal sealed class PackagesApiTests
         // Arrange
 
         // Act
-        IReadOnlyCollection<string> versions = await _api.GetPackageVersions("StudioLE.Example", includePrerelease);
+        IReadOnlyCollection<SemanticVersion> versions = await _api.GetPackageVersions("StudioLE.Example", includePrerelease);
 
         // Assert
         Assert.That(versions, Is.Not.Null);

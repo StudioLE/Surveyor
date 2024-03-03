@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using Surveyor.Utils.Versioning;
 
 namespace Surveyor.Packages;
 
@@ -39,11 +40,11 @@ public class PackagesApi
     /// <param name="packageName">The name of the package.</param>
     /// <param name="includePrerelease">Should pre release versions be included?</param>
     /// <returns>The package metadata as a <see cref="JsonElement"/>.</returns>
-    public async Task<IReadOnlyCollection<string>> GetPackageVersions(string packageName, bool includePrerelease)
+    public async Task<IReadOnlyCollection<SemanticVersion>> GetPackageVersions(string packageName, bool includePrerelease)
     {
         JsonElement? metadataQuery = await GetPackageMetadata(packageName);
         if (metadataQuery is not JsonElement metadata)
-            return Array.Empty<string>();
+            return Array.Empty<SemanticVersion>();
         JsonElement[] items = metadata.GetProperty("items")
             .EnumerateArray()
             .ToArray();
@@ -51,6 +52,7 @@ public class PackagesApi
             .Select(x => x.GetProperty("catalogEntry"))
             .Where(x => includePrerelease || !x.GetProperty("isPrerelease").GetBoolean())
             .Select(x => x.GetProperty("version").GetString() ?? throw new("Failed to get version."))
+            .Select(x => SemanticVersion.Create(x) ?? throw new("Failed to parse version."))
             .OrderByDescending(x => x)
             .ToArray();
     }
