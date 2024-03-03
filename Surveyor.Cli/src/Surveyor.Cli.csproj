@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>StudioLE.Example</AssemblyName>
+    <Description>This is an example project executable.</Description>
+  </PropertyGroup>
+
+  <!-- Use consistent properties across all projects -->
+  <Import Project="..\..\Global.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Surveyor.Core\src\Surveyor.Core.csproj" />
+  </ItemGroup>
+
+</Project>

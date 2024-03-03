@@ -1,0 +1,87 @@
+﻿name: CI/CD
+
+on:
+  push:
+
+jobs:
+
+  test-ubuntu:
+    name: Ubuntu
+    uses: StudioLE/Actions/.github/workflows/01-test.yml@v3
+    with:
+      project: ""
+      os: ubuntu-latest
+      run: ./Illuminate.Generation.DocFx/samples/clone-sample-repo
+    secrets: inherit
+
+  test-windows:
+    name: Windows
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/01-test.yml@v3
+    with:
+      project: ""
+      os: windows-latest
+    secrets: inherit
+
+  release:
+    name: Release
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta"]'), github.ref_name) }}
+    needs:
+    - test-ubuntu
+    uses: StudioLE/Actions/.github/workflows/02-release.yml@v3
+    secrets: inherit
+
+  push:
+    name: Push
+    needs:
+    - release
+    uses: StudioLE/Actions/.github/workflows/03-push.yml@v3
+    with:
+      project: ""
+      version: ${{ needs.release.outputs.version }}
+    secrets: inherit
+
+  publish-server:
+    name: Publish Illuminate.Server
+    needs:
+    - release
+    uses: StudioLE/Actions/.github/workflows/04-publish.yml@v3
+    strategy:
+      matrix:
+        runtime:
+        - win-x64
+        - linux-x64
+    with:
+      project: Illuminate.Server/src/Illuminate.Server.csproj
+      version: ${{ needs.release.outputs.version }}
+      runtime: ${{ matrix.runtime }}
+      npm: Illuminate.Razor/src
+      workload: ""
+      name: Illuminate.Server-${{ needs.release.outputs.version }}-${{ matrix.runtime }}
+    secrets: inherit
+
+  publish-webassembly:
+    name: Publish Illuminate.WebAssembly
+    needs:
+    - release
+    uses: StudioLE/Actions/.github/workflows/04-publish.yml@v3
+    with:
+      project: Illuminate.WebAssembly/src/Illuminate.WebAssembly.csproj
+      version: ${{ needs.release.outputs.version }}
+      runtime: ""
+      npm: Illuminate.Razor/src
+      workload: wasm-tools
+      name: Illuminate.WebAssembly-${{ needs.release.outputs.version }}
+      path: "wwwroot"
+    secrets: inherit
+
+  environment:
+    name: Environment
+    needs:
+    - release
+    - push
+    runs-on: ubuntu-latest
+    environment: ${{ needs.release.outputs.environment }}
+    steps:
+    - run: |
+        echo "Environment: ${{ needs.release.outputs.environment }}"

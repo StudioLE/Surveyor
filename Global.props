@@ -1,0 +1,49 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <Authors>StudioLE</Authors>
+    <Copyright>Copyright © Laurence Elsdon 2023</Copyright>
+    <PackageProjectUrl>https://github.com/StudioLE/Example</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>example dotnet csharp best practice</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" Visible="false"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <IsExecutable>false</IsExecutable>
+    <IsTestLibrary>false</IsTestLibrary>
+    <IsLibrary>false</IsLibrary>
+    <IsExecutable Condition="'$(OutputType)' == 'Exe'">true</IsExecutable>
+    <IsTestLibrary Condition="'$(OutputType)' == 'Library' AND $(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestLibrary>
+    <IsLibrary Condition="'$(OutputType)' == 'Library' AND ! $(MSBuildProjectName.EndsWith('.Tests'))">true</IsLibrary>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsExecutable)">
+    <TargetFramework>net8.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsTestLibrary)">
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsLibrary)">
+    <TargetFramework Condition="'$(TargetFramework)' == ''">netstandard2.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(IsLibrary)">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+</Project>
