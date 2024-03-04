@@ -9,28 +9,40 @@ namespace Surveyor.Core.Tests.Build;
 
 internal sealed class LatestVersionTests
 {
-    private readonly IOptions<PackageApiOptions> _options;
-
-    public LatestVersionTests()
-    {
-        IHost host = Host.CreateDefaultBuilder()
-            .ConfigureServices((_, services) => services
-                .AddTransient<PackageApi>()
-                .AddOptions<PackageApiOptions>()
-                .BindConfiguration(PackageApiOptions.Section))
-            .Build();
-        _options = host.Services.GetRequiredService<IOptions<PackageApiOptions>>();
-    }
-
     [Test]
     public void LatestVersion_Execute()
     {
         // Arrange
         LatestVersion task = new()
         {
+            PackageName = "Microsoft.Extensions.Logging.Abstractions"
+        };
+
+        // Act
+        bool result = task.Execute();
+
+        // Assert
+        Assert.That(result);
+        Assert.That(task.Latest, Is.Not.Empty);
+    }
+
+    [Test]
+    [Explicit("Requires auth token")]
+    public void LatestVersion_Execute_WithAuthToken()
+    {
+        // Arrange
+        IHost host = Host.CreateDefaultBuilder()
+            .ConfigureServices((_, services) => services
+                .AddTransient<PackageApi>()
+                .AddOptions<PackageApiOptions>()
+                .BindConfiguration(PackageApiOptions.Section))
+            .Build();
+        IOptions<PackageApiOptions> options = host.Services.GetRequiredService<IOptions<PackageApiOptions>>();
+        LatestVersion task = new()
+        {
             PackageName = "StudioLE.Example",
-            Feed = _options.Value.Feed,
-            AuthToken = _options.Value.AuthToken
+            Feed = options.Value.Feed,
+            AuthToken = options.Value.AuthToken
         };
 
         // Act
