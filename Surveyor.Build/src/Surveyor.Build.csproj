@@ -36,7 +36,7 @@
   <!-- Add all of our PackageReference and ProjectReference's runtime assets to our package output.  -->
   <Target
     Name="CopyProjectReferencesToPackage"
-    DependsOnTargets="ResolveReferences">
+    AfterTargets="ResolveReferences">
     <ItemGroup>
       <!-- The TargetPath is the path inside the package that the source file will be placed. This is already precomputed in the ReferenceCopyLocalPaths items' DestinationSubPath, so reuse it here. -->
       <BuildOutputInPackage
