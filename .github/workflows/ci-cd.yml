@@ -40,40 +40,6 @@ jobs:
       version: ${{ needs.release.outputs.version }}
     secrets: inherit
 
-  publish-server:
-    name: Publish Illuminate.Server
-    needs:
-    - release
-    uses: StudioLE/Actions/.github/workflows/04-publish.yml@v3
-    strategy:
-      matrix:
-        runtime:
-        - win-x64
-        - linux-x64
-    with:
-      project: Illuminate.Server/src/Illuminate.Server.csproj
-      version: ${{ needs.release.outputs.version }}
-      runtime: ${{ matrix.runtime }}
-      npm: Illuminate.Razor/src
-      workload: ""
-      name: Illuminate.Server-${{ needs.release.outputs.version }}-${{ matrix.runtime }}
-    secrets: inherit
-
-  publish-webassembly:
-    name: Publish Illuminate.WebAssembly
-    needs:
-    - release
-    uses: StudioLE/Actions/.github/workflows/04-publish.yml@v3
-    with:
-      project: Illuminate.WebAssembly/src/Illuminate.WebAssembly.csproj
-      version: ${{ needs.release.outputs.version }}
-      runtime: ""
-      npm: Illuminate.Razor/src
-      workload: wasm-tools
-      name: Illuminate.WebAssembly-${{ needs.release.outputs.version }}
-      path: "wwwroot"
-    secrets: inherit
-
   environment:
     name: Environment
     needs:
