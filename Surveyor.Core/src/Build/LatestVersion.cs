@@ -10,6 +10,8 @@ namespace Surveyor.Build;
 /// <summary>
 /// A build task to determine the latest version of a NuGet package by querying the package feed.
 /// </summary>
+/// <seealso href="https://learn.microsoft.com/en-us/visualstudio/msbuild/tutorial-custom-task-code-generation"/>
+/// <seealso href="https://learn.microsoft.com/en-us/visualstudio/msbuild/task-writing"/>
 public class LatestVersion : Task
 {
     /// <summary>
@@ -57,16 +59,6 @@ public class LatestVersion : Task
         if(string.IsNullOrEmpty(PackageName))
         {
             Log.LogError("The package name is required.");
-            return false;
-        }
-        if(string.IsNullOrEmpty(Feed))
-        {
-            Log.LogError("The package feed is required.");
-            return false;
-        }
-        if(string.IsNullOrEmpty(AuthToken))
-        {
-            Log.LogError("The auth token is required.");
             return false;
         }
         PackageApiOptions options = new()

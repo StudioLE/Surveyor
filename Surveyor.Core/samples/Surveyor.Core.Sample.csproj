@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Use consistent properties across all projects -->
+  <Import Project="../../Global.props"/>
+
+  <PropertyGroup>
+    <Description>This is an example project library.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Surveyor.Core.csproj"/>
+  </ItemGroup>
+
+<!--  <UsingTask TaskName="LatestVersion" AssemblyName="Surveyor.Core" TaskFactory="RoslynCodeTaskFactory"/>-->
+  <UsingTask TaskName="LatestVersion" AssemblyFile="../src/bin/Debug/netstandard2.0/Surveyor.Core.dll"/>
+
+  <Target Name="Versioning" BeforeTargets="BeforeBuild">
+    <Message Text="Updating version number..." Importance="high"/>
+    <LatestVersion PackageName="Microsoft.Extensions.Logging.Abstractions">
+      <Output TaskParameter="Latest" PropertyName="CurrentVersion"/>
+      <Output TaskParameter="NextMajor" PropertyName="NextMajorVersion"/>
+      <Output TaskParameter="NextMinor" PropertyName="NextMinorVersion"/>
+      <Output TaskParameter="NextPatch" PropertyName="NextPatchVersion"/>
+    </LatestVersion>
+    <Message Text="Current: $(CurrentVersion)" Importance="high"/>
+    <Message Text="Next Major: $(NextMajorVersion)" Importance="high"/>
+    <Message Text="Next Minor: $(NextMinorVersion)" Importance="high"/>
+    <Message Text="Next Patch: $(NextPatchVersion)" Importance="high"/>
+  </Target>
+
+</Project>

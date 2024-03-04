@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.Core", "Surveyor.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.Core.Tests", "Surveyor.Core\tests\Surveyor.Core.Tests.csproj", "{07443858-0690-4F81-88E1-BE64418CA3AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.Core.Sample", "Surveyor.Core\samples\Surveyor.Core.Sample.csproj", "{ED13E33F-8F54-49AD-BA4D-591BF4E045D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{07443858-0690-4F81-88E1-BE64418CA3AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07443858-0690-4F81-88E1-BE64418CA3AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07443858-0690-4F81-88E1-BE64418CA3AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED13E33F-8F54-49AD-BA4D-591BF4E045D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED13E33F-8F54-49AD-BA4D-591BF4E045D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED13E33F-8F54-49AD-BA4D-591BF4E045D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED13E33F-8F54-49AD-BA4D-591BF4E045D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
