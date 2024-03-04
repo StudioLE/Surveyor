@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CI)' != 'true'">
-    <PackageReference Include="Surveyor.Build" Version="*" />
+    <PackageReference Include="Surveyor.Build" Version="*-*" />
   </ItemGroup>
 
 </Project>
