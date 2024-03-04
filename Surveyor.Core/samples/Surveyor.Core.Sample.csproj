@@ -11,10 +11,16 @@
     <ProjectReference Include="..\src\Surveyor.Core.csproj"/>
   </ItemGroup>
 
-<!--  <UsingTask TaskName="LatestVersion" AssemblyName="Surveyor.Core" TaskFactory="RoslynCodeTaskFactory"/>-->
-  <UsingTask TaskName="LatestVersion" AssemblyFile="../src/bin/Debug/netstandard2.0/Surveyor.Core.dll"/>
 
-  <Target Name="Versioning" BeforeTargets="BeforeBuild">
+  <PropertyGroup>
+    <SurveyorAssemblyPath>$(MSBuildThisFileDirectory)..\src\bin\$(Release)\netstandard2.0\Surveyor.Core.dll</SurveyorAssemblyPath>
+  </PropertyGroup>
+
+  <UsingTask TaskName="LatestVersion"
+             AssemblyFile="../src/bin/Debug/netstandard2.0/Surveyor.Core.dll"
+             Condition="Exists('$(SurveyorAssemblyPath)')"/>
+
+  <Target Name="Versioning" BeforeTargets="BeforeBuild" Condition="Exists('$(SurveyorAssemblyPath)')">
     <Message Text="Updating version number..." Importance="high"/>
     <LatestVersion PackageName="Microsoft.Extensions.Logging.Abstractions">
       <Output TaskParameter="Latest" PropertyName="CurrentVersion"/>
@@ -26,6 +32,11 @@
     <Message Text="Next Major: $(NextMajorVersion)" Importance="high"/>
     <Message Text="Next Minor: $(NextMinorVersion)" Importance="high"/>
     <Message Text="Next Patch: $(NextPatchVersion)" Importance="high"/>
+  </Target>
+
+  <Target Name="Versioning" BeforeTargets="BeforeBuild" Condition=" ! Exists('$(SurveyorAssemblyPath)')">
+    <Warning Text="Surveyor assembly not found: $(SurveyorAssemblyPath)"/>
+    <Warning Text="Versioning has failed but build will continue."/>
   </Target>
 
 </Project>
