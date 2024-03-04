@@ -2,18 +2,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
-using Surveyor.Build;
 using Surveyor.Packages;
 
-namespace Surveyor.Core.Tests.Build;
+namespace Surveyor.Build.Tests;
 
-internal sealed class LatestVersionTests
+internal sealed class VersioningTaskTests
 {
     [Test]
-    public void LatestVersion_Execute()
+    public void VersioningTask_Execute()
     {
         // Arrange
-        LatestVersion task = new()
+        VersioningTask task = new()
         {
             PackageName = "Microsoft.Extensions.Logging.Abstractions"
         };
@@ -28,7 +27,7 @@ internal sealed class LatestVersionTests
 
     [Test]
     [Explicit("Requires auth token")]
-    public void LatestVersion_Execute_WithAuthToken()
+    public void VersioningTask_Execute_WithAuthToken()
     {
         // Arrange
         IHost host = Host.CreateDefaultBuilder()
@@ -38,7 +37,7 @@ internal sealed class LatestVersionTests
                 .BindConfiguration(PackageApiOptions.Section))
             .Build();
         IOptions<PackageApiOptions> options = host.Services.GetRequiredService<IOptions<PackageApiOptions>>();
-        LatestVersion task = new()
+        VersioningTask task = new()
         {
             PackageName = "StudioLE.Example",
             Feed = options.Value.Feed,

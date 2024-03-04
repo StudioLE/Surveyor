@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Use consistent properties across all projects -->
+  <Import Project="../../Global.props"/>
+
+  <PropertyGroup>
+    <Description>This is an example project library.</Description>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SurveyorPackageName>Microsoft.Extensions.Logging.Abstractions</SurveyorPackageName>
+    <SurveyorFeed/>
+    <SurveyorAuthToken/>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(CI)' != 'true'">
+    <PackageReference Include="Surveyor.Build" Version="*" />
+  </ItemGroup>
+
+</Project>

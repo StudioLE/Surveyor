@@ -12,7 +12,7 @@ namespace Surveyor.Build;
 /// </summary>
 /// <seealso href="https://learn.microsoft.com/en-us/visualstudio/msbuild/tutorial-custom-task-code-generation"/>
 /// <seealso href="https://learn.microsoft.com/en-us/visualstudio/msbuild/task-writing"/>
-public class LatestVersion : Task
+public class VersioningTask : Task
 {
     /// <summary>
     /// The name of the package.
