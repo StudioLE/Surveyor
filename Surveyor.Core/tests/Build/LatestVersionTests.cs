@@ -9,17 +9,17 @@ namespace Surveyor.Core.Tests.Build;
 
 internal sealed class LatestVersionTests
 {
-    private readonly IOptions<PackagesApiOptions> _options;
+    private readonly IOptions<PackageApiOptions> _options;
 
     public LatestVersionTests()
     {
         IHost host = Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) => services
-                .AddTransient<PackagesApi>()
-                .AddOptions<PackagesApiOptions>()
-                .BindConfiguration(PackagesApiOptions.PackagesSection))
+                .AddTransient<PackageApi>()
+                .AddOptions<PackageApiOptions>()
+                .BindConfiguration(PackageApiOptions.Section))
             .Build();
-        _options = host.Services.GetRequiredService<IOptions<PackagesApiOptions>>();
+        _options = host.Services.GetRequiredService<IOptions<PackageApiOptions>>();
     }
 
     [Test]
@@ -29,7 +29,7 @@ internal sealed class LatestVersionTests
         LatestVersion task = new()
         {
             PackageName = "StudioLE.Example",
-            PackageFeed = _options.Value.BaseAddress,
+            Feed = _options.Value.Feed,
             AuthToken = _options.Value.AuthToken
         };
 

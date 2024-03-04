@@ -13,19 +13,19 @@ namespace Surveyor.Packages;
 /// </remarks>
 /// <seealso href="https://learn.microsoft.com/en-us/nuget/api/overview"/>
 /// <seealso href="https://learn.microsoft.com/en-us/nuget/api/registration-base-url-resource"/>
-public class PackagesApi
+public class PackageApi
 {
     private readonly HttpClient _http;
     private JsonElement[]? _resources;
 
     /// <summary>
-    /// Creates a new instance of <see cref="PackagesApi"/>.
+    /// Creates a new instance of <see cref="PackageApi"/>.
     /// </summary>
-    public PackagesApi(PackagesApiOptions options)
+    public PackageApi(PackageApiOptions options)
     {
         _http = new()
         {
-            BaseAddress = new(options.BaseAddress),
+            BaseAddress = new(options.Feed),
             DefaultRequestHeaders =
             {
                 Accept = { new("application/json") },
@@ -35,9 +35,9 @@ public class PackagesApi
     }
 
     /// <summary>
-    /// DI constructor for <see cref="PackagesApi"/>.
+    /// DI constructor for <see cref="PackageApi"/>.
     /// </summary>
-    public PackagesApi(IOptions<PackagesApiOptions> options) : this(options.Value)
+    public PackageApi(IOptions<PackageApiOptions> options) : this(options.Value)
     {
     }
 

@@ -6,23 +6,23 @@ using Surveyor.Utils.Versioning;
 
 namespace Surveyor.Core.Tests.Packages;
 
-internal sealed class PackagesApiTests
+internal sealed class PackageApiTests
 {
-    private readonly PackagesApi _api;
+    private readonly PackageApi _api;
 
-    public PackagesApiTests()
+    public PackageApiTests()
     {
         IHost host = Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) => services
-                .AddTransient<PackagesApi>()
-                .AddOptions<PackagesApiOptions>()
-                .BindConfiguration(PackagesApiOptions.PackagesSection))
+                .AddTransient<PackageApi>()
+                .AddOptions<PackageApiOptions>()
+                .BindConfiguration(PackageApiOptions.Section))
             .Build();
-        _api = host.Services.GetRequiredService<PackagesApi>();
+        _api = host.Services.GetRequiredService<PackageApi>();
     }
 
     [Test]
-    public async Task PackagesApi_GetPackageVersions([Values] bool includePrerelease)
+    public async Task PackageApi_GetPackageVersions([Values] bool includePrerelease)
     {
         // Arrange
 

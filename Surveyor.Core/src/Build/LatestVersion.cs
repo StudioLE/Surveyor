@@ -17,9 +17,9 @@ public class LatestVersion : Task
     public string PackageName { get; set; } = string.Empty;
 
     /// <summary>
-    /// The address of the package feed.
+    /// The URL of the package feed.
     /// </summary>
-    public string PackageFeed { get; set; } = string.Empty;
+    public string Feed { get; set; } = string.Empty;
 
     /// <summary>
     /// The auth token for the package feed.
@@ -58,7 +58,7 @@ public class LatestVersion : Task
             Log.LogError("The package name is required.");
             return false;
         }
-        if(string.IsNullOrEmpty(PackageFeed))
+        if(string.IsNullOrEmpty(Feed))
         {
             Log.LogError("The package feed is required.");
             return false;
@@ -68,12 +68,12 @@ public class LatestVersion : Task
             Log.LogError("The auth token is required.");
             return false;
         }
-        PackagesApiOptions options = new()
+        PackageApiOptions options = new()
         {
-            BaseAddress = PackageFeed,
+            Feed = Feed,
             AuthToken = AuthToken
         };
-        PackagesApi api = new(options);
+        PackageApi api = new(options);
         Task<IReadOnlyCollection<SemanticVersion>> task = api.GetPackageVersions(PackageName, false);
         task.Wait();
         IReadOnlyCollection<SemanticVersion> versions = task.Result;
