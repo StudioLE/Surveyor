@@ -1,5 +1,8 @@
+using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Surveyor.System;
 using Surveyor.Utils.Versioning;
 
 namespace Surveyor.Packages;
@@ -10,26 +13,37 @@ namespace Surveyor.Packages;
 /// <remarks>
 /// The NuGet API is rather fickle as servers differ in their implementations.
 /// This implementation intends to provide a seamless experience by working with only the required resources.
+/// This is a low level wrapper working directly with the JSON API without using the
+/// <see href="https://www.nuget.org/packages/NuGet.Protocol">Nuget.Protocol</see> package.
 /// </remarks>
 /// <seealso href="https://learn.microsoft.com/en-us/nuget/api/overview"/>
 /// <seealso href="https://learn.microsoft.com/en-us/nuget/api/registration-base-url-resource"/>
 public class PackageApi
 {
+    private const string DefaultFeed = "https://api.nuget.org/v3/index.json";
+    private readonly ILogger<PackageApi> _logger;
     private readonly HttpClient _http;
     private JsonElement[]? _resources;
 
     /// <summary>
     /// Creates a new instance of <see cref="PackageApi"/>.
     /// </summary>
-    public PackageApi(PackageApiOptions options)
+    public PackageApi(ILogger<PackageApi> logger, PackageApiOptions options)
     {
+        _logger = logger;
+        Uri feed = string.IsNullOrEmpty(options.Feed)
+            ? new(DefaultFeed)
+            : new(options.Feed);
+        AuthenticationHeaderValue? auth = string.IsNullOrEmpty(options.AuthToken)
+            ? null
+            : new(options.AuthToken);
         _http = new()
         {
-            BaseAddress = new(options.Feed),
+            BaseAddress = feed,
             DefaultRequestHeaders =
             {
                 Accept = { new("application/json") },
-                Authorization = new(options.AuthToken)
+                Authorization = auth
             }
         };
     }
@@ -37,7 +51,7 @@ public class PackageApi
     /// <summary>
     /// DI constructor for <see cref="PackageApi"/>.
     /// </summary>
-    public PackageApi(IOptions<PackageApiOptions> options) : this(options.Value)
+    public PackageApi(ILogger<PackageApi> logger, IOptions<PackageApiOptions> options) : this(logger, options.Value)
     {
     }
 
@@ -49,17 +63,12 @@ public class PackageApi
     /// <returns>The package metadata as a <see cref="JsonElement"/>.</returns>
     public async Task<IReadOnlyCollection<SemanticVersion>> GetPackageVersions(string packageName, bool includePrerelease)
     {
-        JsonElement? metadataQuery = await GetPackageMetadata(packageName);
-        if (metadataQuery is not JsonElement metadata)
-            return Array.Empty<SemanticVersion>();
-        JsonElement[] items = metadata.GetProperty("items")
-            .EnumerateArray()
-            .ToArray();
+        JsonElement[] items = await GetPackageMetadata(packageName);
         return items
             .Select(x => x.GetProperty("catalogEntry"))
-            .Where(x => includePrerelease || !x.GetProperty("isPrerelease").GetBoolean())
             .Select(x => x.GetProperty("version").GetString() ?? throw new("Failed to get version."))
             .Select(x => SemanticVersion.Create(x) ?? throw new("Failed to parse version."))
+            .Where(x => includePrerelease || !x.IsPrerelease())
             .OrderByDescending(x => x)
             .ToArray();
     }
@@ -69,35 +78,48 @@ public class PackageApi
     /// </summary>
     /// <param name="packageName">The name of the package.</param>
     /// <returns>The package metadata as a <see cref="JsonElement"/>.</returns>
-    private async Task<JsonElement?> GetPackageMetadata(string packageName)
+    private async Task<JsonElement[]> GetPackageMetadata(string packageName)
     {
-        string baseUri = await GetResourceUri("RegistrationsBaseUrl");
+        string? baseUri = await GetResourceUri("RegistrationsBaseUrl");
+        if (baseUri is null)
+            return Array.Empty<JsonElement>();
+        baseUri = baseUri.TrimEnd('/');
         string uri = $"{baseUri}/{packageName.ToLower()}/index.json";
         HttpResponseMessage response = await _http.GetAsync(uri);
         if (!response.IsSuccessStatusCode)
-            return null;
+            return Array.Empty<JsonElement>();
         string content = await response.Content.ReadAsStringAsync();
         JsonDocument json = JsonDocument.Parse(content);
-        JsonElement[] items = json.RootElement.GetProperty("items").EnumerateArray().ToArray();
-        if (items.Length == 0)
-            return null;
-        // TODO: Warning if more than one item
-
-        return items.FirstOrDefault();
+        JsonElement[] items = json
+            .RootElement
+            .GetProperty("items")
+            .EnumerateArray()
+            .ToArray();
+        JsonElement[] subItems = items
+            .SelectMany(x => x.GetProperty("items").EnumerateArray())
+            .ToArray();
+        return subItems;
     }
 
     /// <summary>
     /// Get the resource URI for a given resource type.
     /// </summary>
-    private async Task<string> GetResourceUri(string type)
+    private async Task<string?> GetResourceUri(string type)
     {
         JsonElement[] resources = await GetResources();
-        JsonElement resource = resources
-            .FirstOrDefault(resource =>
+        if (resources.Length == 0)
+            return null;
+        JsonElement? resourceQuery = resources
+            .FirstOrNull(x =>
             {
-                JsonElement json = resource.GetProperty("@type");
+                JsonElement json = x.GetProperty("@type");
                 return json.GetString() == type;
             });
+        if (resourceQuery is not JsonElement resource)
+        {
+            _logger.LogError("Failed to get resource URI for type: {Type}", type);
+            return null;
+        }
         string id = resource
                         .GetProperty("@id")
                         .GetString()
@@ -114,7 +136,10 @@ public class PackageApi
             return resources;
         HttpResponseMessage response = await _http.GetAsync("index.json");
         if (!response.IsSuccessStatusCode)
-            throw new("Failed to get index.json.");
+        {
+            _logger.LogError("Failed to get resources from NuGet feed: {Feed}. Response was: {StatusCode}", _http.BaseAddress, response.StatusCode);
+            return Array.Empty<JsonElement>();
+        }
         string content = await response.Content.ReadAsStringAsync();
         JsonDocument json = JsonDocument.Parse(content);
         resources = json

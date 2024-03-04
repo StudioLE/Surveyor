@@ -52,4 +52,16 @@ public static class SemanticVersionHelpers
             Patch = current.Patch + 1
         };
     }
+
+    /// <summary>
+    /// Determine if the version is a pre-release.
+    /// </summary>
+    /// <param name="version">The version to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the version is a pre-release; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsPrerelease(this SemanticVersion version)
+    {
+        return !string.IsNullOrEmpty(version.PreRelease);
+    }
 }

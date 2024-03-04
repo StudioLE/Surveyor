@@ -1,4 +1,5 @@
 using Microsoft.Build.Framework;
+using Microsoft.Extensions.Logging.Abstractions;
 using Surveyor.Packages;
 using Surveyor.System;
 using Surveyor.Utils.Versioning;
@@ -73,7 +74,7 @@ public class LatestVersion : Task
             Feed = Feed,
             AuthToken = AuthToken
         };
-        PackageApi api = new(options);
+        PackageApi api = new(new NullLogger<PackageApi>(), options);
         Task<IReadOnlyCollection<SemanticVersion>> task = api.GetPackageVersions(PackageName, false);
         task.Wait();
         IReadOnlyCollection<SemanticVersion> versions = task.Result;
