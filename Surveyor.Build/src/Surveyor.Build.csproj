@@ -20,7 +20,7 @@
   <!-- https://learn.microsoft.com/en-us/visualstudio/msbuild/tutorial-custom-task-code-generation?view=vs-2022#bundle-dependencies-into-the-package -->
 
   <PropertyGroup>
-    
+
     <!-- This target will run when MSBuild is collecting the files to be packaged, and we'll implement it below. This property controls the dependency list for this packaging process, so by adding our custom property we hook ourselves into the process in a supported way. -->
     <TargetsForTfmSpecificBuildOutput>
       $(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage
@@ -36,7 +36,8 @@
   <!-- Add all of our PackageReference and ProjectReference's runtime assets to our package output.  -->
   <Target
     Name="CopyProjectReferencesToPackage"
-    AfterTargets="ResolveReferences">
+    DependsOnTargets="ResolveReferences"
+    Condition="'$(NoBuild)' != 'true'">
     <ItemGroup>
       <!-- The TargetPath is the path inside the package that the source file will be placed. This is already precomputed in the ReferenceCopyLocalPaths items' DestinationSubPath, so reuse it here. -->
       <BuildOutputInPackage
@@ -44,7 +45,7 @@
         TargetPath="%(ReferenceCopyLocalPaths.DestinationSubPath)" />
     </ItemGroup>
   </Target>
-  
+
   <!-- Generate and embed a deps.json file -->
   <!-- https://learn.microsoft.com/en-us/visualstudio/msbuild/tutorial-custom-task-code-generation?view=vs-2022#generate-and-embed-a-depsjson-file -->
 
@@ -67,7 +68,7 @@
 
   <!-- Include MSBuild properties and targets in a package -->
   <!-- https://learn.microsoft.com/en-us/visualstudio/msbuild/tutorial-custom-task-code-generation?view=vs-2022#include-msbuild-properties-and-targets-in-a-package -->
-  
+
   <ItemGroup>
     <!-- these lines pack the build props/targets files to the `build` folder in the generated package.
       by convention, the .NET SDK will look for build\<Package Id>.props and build\<Package Id>.targets
