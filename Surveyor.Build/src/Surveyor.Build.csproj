@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Surveyor.Core\src\Surveyor.Core.csproj" PrivateAssets="all"/>
+    <ProjectReference Include="..\..\Surveyor.Core\src\Surveyor.Core.csproj" PrivateAssets="all" GlobalPropertiesToRemove="NoBuild" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,8 +36,7 @@
   <!-- Add all of our PackageReference and ProjectReference's runtime assets to our package output.  -->
   <Target
     Name="CopyProjectReferencesToPackage"
-    DependsOnTargets="ResolveReferences"
-    Condition="'$(NoBuild)' != 'true'">
+    DependsOnTargets="ResolveReferences">
     <ItemGroup>
       <!-- The TargetPath is the path inside the package that the source file will be placed. This is already precomputed in the ReferenceCopyLocalPaths items' DestinationSubPath, so reuse it here. -->
       <BuildOutputInPackage
