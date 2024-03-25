@@ -24,6 +24,7 @@ internal class GitCliTests
     }
 
     [Test]
+    [Explicit("Requires fetched tags")]
     public void GitCli_GetProjectsWithChanges()
     {
         // Arrange
@@ -35,6 +36,7 @@ internal class GitCliTests
     }
 
     [Test]
+    [Explicit("Requires fetched tags")]
     public void GitCli_GetConventionalCommitsSince()
     {
         // Arrange
