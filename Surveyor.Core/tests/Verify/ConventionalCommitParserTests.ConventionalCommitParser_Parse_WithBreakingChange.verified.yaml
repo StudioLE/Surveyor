@@ -1,0 +1,8 @@
+Hash: ''
+TypeId: feat
+Scope: api
+IsBreaking: true
+Subject: send an email to the customer when a product is shipped
+Body: ''
+Footers: {}
+Release: Major

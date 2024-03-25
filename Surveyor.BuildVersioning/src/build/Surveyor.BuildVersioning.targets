@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <SurveyorPackageName Condition="'$(SurveyorPackageName)' == ''">$(AssemblyName)</SurveyorPackageName>
+    <SurveyorProjectDirectory Condition="'$(SurveyorProjectDirectory)' == ''">$(MSBuildProjectDirectory)</SurveyorProjectDirectory>
+  </PropertyGroup>
+
+  <Target Name="BuildVersioning" BeforeTargets="BeforeBuild" Condition="Exists('$(SurveyorAssemblyPath)') AND '$(Configuration)' == 'Release'">
+    <VersioningTask
+      PackageName="$(SurveyorPackageName)"
+      ProjectDirectory="$(SurveyorProjectDirectory)"
+      BranchName="$(SurveyorBranchName)"
+      Feed="$(SurveyorFeed)"
+      AuthToken="$(SurveyorAuthToken)">
+      <Output TaskParameter="VersionPrefix" PropertyName="VersionPrefix"/>
+      <Output TaskParameter="VersionSuffix" PropertyName="VersionSuffix"/>
+      <Output TaskParameter="Version" PropertyName="PackageVersion"/>
+    </VersioningTask>
+    <Message Text="VersionPrefix: $(VersionPrefix)" Importance="high"/>
+    <Message Text="VersionSuffix: $(VersionSuffix)" Importance="high"/>
+    <Message Text="PackageVersion: $(PackageVersion)" Importance="high"/>
+  </Target>
+
+  <Target Name="NoVersioning" BeforeTargets="BeforeBuild" Condition=" ! Exists('$(SurveyorAssemblyPath)')">
+    <Warning Text="Surveyor assembly not found: $(SurveyorAssemblyPath)"/>
+    <Warning Text="Versioning has failed but build will continue."/>
+  </Target>
+
+</Project>

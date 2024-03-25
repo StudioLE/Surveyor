@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveyor.Packages;
-using Surveyor.Utils.Versioning;
+using Surveyor.Versioning;
 
 namespace Surveyor.Core.Tests.Packages;
 

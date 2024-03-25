@@ -1,0 +1,9 @@
+Hash: ''
+TypeId: chore
+Scope: ''
+IsBreaking: true
+Subject: drop support for Node 6
+Body: >
+  BREAKING CHANGE: use JavaScript features not available in Node 6.
+Footers: {}
+Release: Major

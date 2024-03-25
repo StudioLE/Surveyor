@@ -8,8 +8,9 @@ public class PackageApiOptions
     private const string DefaultFeed = "https://api.nuget.org/v3/index.json";
 
     /// <summary>
-    /// The section name for <see cref="PackageApiOptions"/>.
+    /// The section key for binding options.
     /// </summary>
+    /// <seealso href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-7.0#bind-hierarchical-configuration-data-using-the-options-pattern"/>
     public const string Section = "Packages";
 
     /// <summary>

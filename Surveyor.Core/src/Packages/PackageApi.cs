@@ -3,7 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Surveyor.System;
-using Surveyor.Utils.Versioning;
+using Surveyor.Versioning;
 
 namespace Surveyor.Packages;
 
@@ -68,7 +68,7 @@ public class PackageApi
             .Select(x => x.GetProperty("catalogEntry"))
             .Select(x => x.GetProperty("version").GetString() ?? throw new("Failed to get version."))
             .Select(x => SemanticVersion.Create(x) ?? throw new("Failed to parse version."))
-            .Where(x => includePrerelease || !x.IsPrerelease())
+            .Where(x => includePrerelease || !x.IsPreRelease())
             .OrderByDescending(x => x)
             .ToArray();
     }
@@ -134,7 +134,16 @@ public class PackageApi
     {
         if (_resources is JsonElement[] resources)
             return resources;
-        HttpResponseMessage response = await _http.GetAsync("index.json");
+        HttpResponseMessage response;
+        try
+        {
+            response = await _http.GetAsync("index.json");
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Failed to get resources from NuGet feed: {Feed}", _http.BaseAddress);
+            return Array.Empty<JsonElement>();
+        }
         if (!response.IsSuccessStatusCode)
         {
             _logger.LogError("Failed to get resources from NuGet feed: {Feed}. Response was: {StatusCode}", _http.BaseAddress, response.StatusCode);

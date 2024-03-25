@@ -1,0 +1,21 @@
+Hash: ''
+TypeId: fix
+Scope: ''
+IsBreaking: false
+Subject: prevent racing of requests
+Body: >
+  Introduce a request id and a reference to latest request. Dismiss
+
+  incoming responses other than from latest request.
+
+  Remove timeouts which were used to mitigate the racing issue but are
+
+  obsolete now.
+Footers:
+  Refs: '#123'
+  HELLO-WORLD: >
+    This is a
+
+    multi-line trailer
+  Reviewed-by: Z
+Release: Patch
