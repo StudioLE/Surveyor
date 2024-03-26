@@ -12,13 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli", "Cli", "{FB96C73D-786
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{4EFCB15E-C770-426B-82C6-59DDC3D4DD12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.BuildVersioning.Sample", "Surveyor.BuildVersioning\samples\Surveyor.BuildVersioning.Sample.csproj", "{78B30BC7-79B7-4B79-96D2-4962C28F209B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.BuildVersioning.Sample.Local", "Surveyor.BuildVersioning\samples\local\Surveyor.BuildVersioning.Sample.Local.csproj", "{78B30BC7-79B7-4B79-96D2-4962C28F209B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.BuildVersioning", "Surveyor.BuildVersioning\src\Surveyor.BuildVersioning.csproj", "{5E097FFE-E7DC-4AC5-BDD5-F5F6A42EC575}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.BuildVersioning.Tests", "Surveyor.BuildVersioning\tests\Surveyor.BuildVersioning.Tests.csproj", "{0D8EB155-95CC-4BF4-847D-3612F60D9F4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.BuildVersioning.NuGet.Sample", "Surveyor.BuildVersioning\samples\Surveyor.BuildVersioning.NuGet.Sample.csproj", "{8757E6D1-951E-4467-B1D6-7E618F5C3B54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveyor.BuildVersioning.Sample.NuGet", "Surveyor.BuildVersioning\samples\nuget\Surveyor.BuildVersioning.Sample.NuGet.csproj", "{8757E6D1-951E-4467-B1D6-7E618F5C3B54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

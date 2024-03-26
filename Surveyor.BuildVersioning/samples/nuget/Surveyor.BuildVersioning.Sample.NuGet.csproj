@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Use consistent properties across all projects -->
-  <Import Project="../../Global.props"/>
+  <Import Project="../../../Global.props"/>
 
   <PropertyGroup>
     <Description>This is an example project library.</Description>
@@ -11,7 +11,7 @@
     <SurveyorBranchName>alpha</SurveyorBranchName>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(CI)' != 'true'">
     <PackageReference Include="Surveyor.BuildVersioning" Version="0.1.0-alpha.7" />
   </ItemGroup>
 

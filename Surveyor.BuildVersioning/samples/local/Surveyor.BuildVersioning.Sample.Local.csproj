@@ -1,22 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Use consistent properties across all projects -->
-  <Import Project="../../Global.props"/>
+  <Import Project="../../../Global.props"/>
 
   <PropertyGroup>
     <Description>This is an example project library.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Surveyor.BuildVersioning.csproj" />
+    <ProjectReference Include="../../src/Surveyor.BuildVersioning.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
     <SurveyorBranchName>alpha</SurveyorBranchName>
-    <SurveyorAssemblyPath>../src/bin/$(Configuration)/netstandard2.0/Surveyor.BuildVersioning.dll</SurveyorAssemblyPath>
+    <SurveyorAssemblyPath>../../src/bin/$(Configuration)/netstandard2.0/Surveyor.BuildVersioning.dll</SurveyorAssemblyPath>
   </PropertyGroup>
 
   <UsingTask TaskName="VersioningTask" AssemblyFile="$(SurveyorAssemblyPath)" Condition="Exists('$(SurveyorAssemblyPath)')"/>
-  <Import Project="../src/build/Surveyor.BuildVersioning.targets"/>
+  <Import Project="../../src/build/Surveyor.BuildVersioning.targets" Condition="'$(CI)' != 'true'"/>
 
 </Project>

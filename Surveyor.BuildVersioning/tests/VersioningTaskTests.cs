@@ -7,6 +7,7 @@ namespace Surveyor.BuildVersioning.Tests;
 internal sealed class VersioningTaskTests
 {
     [Test]
+    [Explicit("Requires alpha branch")]
     public void VersioningTask_Execute()
     {
         // Arrange
