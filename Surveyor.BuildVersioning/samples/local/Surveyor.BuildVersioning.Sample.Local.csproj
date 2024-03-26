@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <Description>This is an example project library.</Description>
+    <IsPackable Condition="'$(CI)' == 'true'">false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
