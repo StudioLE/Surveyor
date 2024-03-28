@@ -99,7 +99,8 @@ public class ReleaseNotesByScopeFactory : IFactory<IReadOnlyCollection<Conventio
     {
         return str
             .Trim()
-            .Split(['\r', '\n'])
+            .Replace("\r\n", "\n")
+            .Split('\n')
             .Select(line => $"> {line}")
             .Join();
     }
