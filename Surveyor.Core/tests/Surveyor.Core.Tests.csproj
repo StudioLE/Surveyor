@@ -13,7 +13,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="StudioLE.Diagnostics.NUnit" Version="0.8.0" />
-    <PackageReference Include="StudioLE.Verify.Yaml" Version="0.8.0" />
+    <PackageReference Include="StudioLE.Verify.Yaml" Version="0.9.0" />
   </ItemGroup>
 
   <ItemGroup>

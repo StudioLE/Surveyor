@@ -3,7 +3,7 @@ TypeId: hmmmm
 Scope: ''
 IsBreaking: false
 Subject: drop support for Node 6
-Body: >
+Body: |
   use JavaScript features not available in Node 6.
 Footers: {}
 Release: Unknown

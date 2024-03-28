@@ -3,7 +3,7 @@ TypeId: feat
 Scope: ''
 IsBreaking: true
 Subject: allow provided config object to extend other configs
-Body: >
+Body: |
   BREAKING CHANGE: `extends` key in config file is now used for extending other config files
 Footers: {}
 Release: Major

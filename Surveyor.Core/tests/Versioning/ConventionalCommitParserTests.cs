@@ -7,9 +7,6 @@ using Surveyor.Versioning;
 namespace Surveyor.Core.Tests.Versioning;
 
 [TestFixture]
-#if WINDOWS
-[Explicit("VerifyAsYaml is not supported on Windows")]
-#endif
 internal class ConventionalCommitParserTests
 {
     private readonly ConventionalCommitParser _parser = new(new());
