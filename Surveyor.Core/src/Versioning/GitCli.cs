@@ -38,7 +38,9 @@ public class GitCli
 
     private static string GetRootDirectory(string path)
     {
-        string absolutePath = Path.GetFullPath(path).TrimEnd(['/', '\\']);
+        string absolutePath = Path.GetFullPath(path)
+            .Replace('\\', '/')
+            .TrimEnd('/');
         if (!ValidatePathArgument(absolutePath))
             throw new("Invalid path argument.");
         if (!Directory.Exists(absolutePath))
@@ -292,7 +294,7 @@ public class GitCli
     /// </remarks>
     private static bool ValidatePathArgument(string path)
     {
-        Regex regex = new(@"^[a-z0-9._\- \/\\#]+$", RegexOptions.IgnoreCase);
+        Regex regex = new(@"^[a-z0-9._\- \/\\#:]+$", RegexOptions.IgnoreCase);
         return regex.IsMatch(path);
     }
 }

@@ -58,7 +58,8 @@ public class ChangedFileProvider : IChangedFileProvider
 
     private IEnumerable<string> GetInternal(string projectDirectory, string? sinceRef)
     {
-        string absoluteProjectDirectory = Path.GetFullPath(projectDirectory);
+        string absoluteProjectDirectory = Path.GetFullPath(projectDirectory)
+            .Replace('\\', '/');
         if (absoluteProjectDirectory.StartsWith(_git.RootDirectory) is false)
         {
             _logger.LogError("The project directory is outside the root directory.");
