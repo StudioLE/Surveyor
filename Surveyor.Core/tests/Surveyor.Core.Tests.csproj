@@ -20,12 +20,4 @@
     <ProjectReference Include="..\src\Surveyor.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Verify\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Verify\ReleaseNotesFactoryTests.ReleaseNotesFactory_Create.verified.md" />
-  </ItemGroup>
-
 </Project>
