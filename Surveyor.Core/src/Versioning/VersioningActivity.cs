@@ -52,6 +52,8 @@ public class VersioningActivity
     {
         if (string.IsNullOrEmpty(options.BranchName))
             options.BranchName = _git.GetCurrentBranch();
+        if (string.IsNullOrEmpty(options.ProjectDirectory))
+            options.ProjectDirectory = _git.RootDirectory;
         ReleaseStream? releaseStreamQuery = _releaseStreamProvider.Get(options.BranchName);
         if (releaseStreamQuery is not ReleaseStream releaseStream)
         {
@@ -65,13 +67,14 @@ public class VersioningActivity
         SemanticVersion latestVersionOnBranch = branchVersions.Count == 0
             ? new()
             : branchVersions.First();
-        IReadOnlyCollection<SemanticVersion> publishedVersions = (await _publishedVersionProvider.Get(options.PackageName))
+        IReadOnlyCollection<SemanticVersion> publishedVersions = string.IsNullOrEmpty(options.PackageName)
+            ? Array.Empty<SemanticVersion>()
+            : (await _publishedVersionProvider.Get(options.PackageName))
             .OrderByDescending(x => x)
             .ToArray();
         IReadOnlyCollection<SemanticVersion> publishedVersionsOnBranch = publishedVersions
             .Where(x => branchVersions.Contains(x))
             .ToArray();
-
         SemanticVersion? latestPublishedVersionOnBranch = publishedVersionsOnBranch.FirstOrNull();
         IEnumerable<string> changedFiles = publishedVersionsOnBranch.Count == 0
             ? _changedFileProvider.Get(options.ProjectDirectory)
@@ -104,7 +107,7 @@ public class VersioningActivity
                 Minor = version.Minor,
                 Patch = version.Patch
             };
-        if(releaseType > latestReleaseType)
+        if (releaseType > latestReleaseType)
             version = SemanticVersionHelpers.Bump(version, releaseType);
         while (repositoryVersions.Contains(version))
             version = SemanticVersionHelpers.Bump(version, releaseType);

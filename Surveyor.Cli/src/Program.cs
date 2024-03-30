@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Surveyor.Hosting;
 using Surveyor.Versioning;
 
-IHost host = Host.CreateDefaultBuilder()
+IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((_, services) => services
         .AddSurveyorServices()
         .AddSurveyorOptions())

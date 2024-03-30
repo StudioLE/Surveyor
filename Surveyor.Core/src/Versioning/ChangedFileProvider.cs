@@ -65,7 +65,9 @@ public class ChangedFileProvider : IChangedFileProvider
             _logger.LogError("The project directory is outside the root directory.");
             return Enumerable.Empty<string>();
         }
-        string relativeProjectDirectory = absoluteProjectDirectory.Substring(_git.RootDirectory.Length + 1);
+        string relativeProjectDirectory = projectDirectory == _git.RootDirectory
+            ? string.Empty
+            : absoluteProjectDirectory.Substring(_git.RootDirectory.Length + 1);
         IReadOnlyCollection<string> changedFiles = string.IsNullOrEmpty(sinceRef)
             ? _git.GetAllFiles()
             : _git.GetFilesChangedSince(sinceRef!);
