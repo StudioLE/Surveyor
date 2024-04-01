@@ -2,17 +2,17 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <SurveyorPackageName Condition="'$(SurveyorPackageName)' == ''">$(AssemblyName)</SurveyorPackageName>
-    <SurveyorProjectDirectory Condition="'$(SurveyorProjectDirectory)' == ''">$(MSBuildProjectDirectory)</SurveyorProjectDirectory>
+    <SurveyorPackage Condition="'$(SurveyorPackage)' == ''">$(AssemblyName)</SurveyorPackage>
+    <SurveyorDirectory Condition="'$(SurveyorDirectory)' == ''">$(MSBuildProjectDirectory)</SurveyorDirectory>
   </PropertyGroup>
 
   <Target Name="BuildVersioning" BeforeTargets="BeforeBuild" Condition="Exists('$(SurveyorAssemblyPath)') AND '$(Configuration)' == 'Release'">
     <VersioningTask
-      PackageName="$(SurveyorPackageName)"
-      ProjectDirectory="$(SurveyorProjectDirectory)"
-      BranchName="$(SurveyorBranchName)"
+      Package="$(SurveyorPackage)"
+      Directory="$(SurveyorDirectory)"
+      Branch="$(SurveyorBranch)"
       Feed="$(SurveyorFeed)"
-      AuthToken="$(SurveyorAuthToken)">
+      Token="$(SurveyorToken)">
       <Output TaskParameter="VersionPrefix" PropertyName="VersionPrefix"/>
       <Output TaskParameter="VersionSuffix" PropertyName="VersionSuffix"/>
       <Output TaskParameter="Version" PropertyName="PackageVersion"/>

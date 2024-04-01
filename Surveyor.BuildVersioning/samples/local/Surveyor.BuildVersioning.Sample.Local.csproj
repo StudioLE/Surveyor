@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <SurveyorBranchName>alpha</SurveyorBranchName>
+    <SurveyorBranch>alpha</SurveyorBranch>
     <SurveyorAssemblyPath>../../src/bin/$(Configuration)/netstandard2.0/Surveyor.BuildVersioning.dll</SurveyorAssemblyPath>
   </PropertyGroup>
 

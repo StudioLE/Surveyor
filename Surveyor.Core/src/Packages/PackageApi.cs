@@ -34,9 +34,9 @@ public class PackageApi
         Uri feed = string.IsNullOrEmpty(options.Feed)
             ? new(DefaultFeed)
             : new(options.Feed);
-        AuthenticationHeaderValue? auth = string.IsNullOrEmpty(options.AuthToken)
+        AuthenticationHeaderValue? auth = string.IsNullOrEmpty(options.Token)
             ? null
-            : new(options.AuthToken);
+            : new(options.Token);
         _http = new()
         {
             BaseAddress = feed,

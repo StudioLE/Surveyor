@@ -50,26 +50,26 @@ public class VersioningActivity
     /// <returns></returns>
     public async Task<SemanticVersion?> Execute(VersioningActivityOptions options)
     {
-        if (string.IsNullOrEmpty(options.BranchName))
-            options.BranchName = _git.GetCurrentBranch();
-        if (string.IsNullOrEmpty(options.ProjectDirectory))
-            options.ProjectDirectory = _git.RootDirectory;
-        ReleaseStream? releaseStreamQuery = _releaseStreamProvider.Get(options.BranchName);
+        if (string.IsNullOrEmpty(options.Branch))
+            options.Branch = _git.GetCurrentBranch();
+        if (string.IsNullOrEmpty(options.Directory))
+            options.Directory = _git.RootDirectory;
+        ReleaseStream? releaseStreamQuery = _releaseStreamProvider.Get(options.Branch);
         if (releaseStreamQuery is not ReleaseStream releaseStream)
         {
-            _logger.LogInformation($"The {options.BranchName} branch is not a release stream.");
+            _logger.LogInformation($"The {options.Branch} branch is not a release stream.");
             return null;
         }
         IReadOnlyCollection<SemanticVersion> branchVersions = _branchVersionProvider
-            .Get(options.BranchName)
+            .Get(options.Branch)
             .OrderByDescending(x => x)
             .ToArray();
         SemanticVersion latestVersionOnBranch = branchVersions.Count == 0
             ? new()
             : branchVersions.First();
-        IReadOnlyCollection<SemanticVersion> publishedVersions = string.IsNullOrEmpty(options.PackageName)
+        IReadOnlyCollection<SemanticVersion> publishedVersions = string.IsNullOrEmpty(options.Package)
             ? Array.Empty<SemanticVersion>()
-            : (await _publishedVersionProvider.Get(options.PackageName))
+            : (await _publishedVersionProvider.Get(options.Package))
             .OrderByDescending(x => x)
             .ToArray();
         IReadOnlyCollection<SemanticVersion> publishedVersionsOnBranch = publishedVersions
@@ -77,8 +77,8 @@ public class VersioningActivity
             .ToArray();
         SemanticVersion? latestPublishedVersionOnBranch = publishedVersionsOnBranch.FirstOrNull();
         IEnumerable<string> changedFiles = publishedVersionsOnBranch.Count == 0
-            ? _changedFileProvider.Get(options.ProjectDirectory)
-            : _changedFileProvider.Get(options.ProjectDirectory, latestPublishedVersionOnBranch!.Value);
+            ? _changedFileProvider.Get(options.Directory)
+            : _changedFileProvider.Get(options.Directory, latestPublishedVersionOnBranch!.Value);
         if (!changedFiles.Any())
         {
             _logger.LogInformation("No changes have been made since the last published version.");

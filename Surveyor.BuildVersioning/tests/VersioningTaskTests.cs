@@ -18,9 +18,9 @@ internal sealed class VersioningTaskTests
         VersioningTask task = new()
         {
             BuildEngine = engine,
-            PackageName = "Surveyor.Core",
-            ProjectDirectory = directory,
-            BranchName = "alpha"
+            Package = "Surveyor.Core",
+            Directory = directory,
+            Branch = "alpha"
         };
 
         // Act

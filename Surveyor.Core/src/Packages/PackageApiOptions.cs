@@ -21,5 +21,5 @@ public class PackageApiOptions
     /// <summary>
     /// An optional authentication token for the NuGet feed.
     /// </summary>
-    public string AuthToken { get; set; } = string.Empty;
+    public string Token { get; set; } = string.Empty;
 }

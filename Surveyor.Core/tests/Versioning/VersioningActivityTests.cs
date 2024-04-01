@@ -97,7 +97,7 @@ internal sealed class VersioningActivityTests
         ReleaseStreamProvider releaseStreamProvider = new();
         MockReleaseTypeStrategy releaseTypeStrategy = new(releaseType);
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
-        options.BranchName = branchName;
+        options.Branch = branchName;
         VersioningActivity activity = new(
             logger,
             null!,

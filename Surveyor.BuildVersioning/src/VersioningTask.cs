@@ -22,17 +22,17 @@ public class VersioningTask : Task
     /// <remarks>
     /// The current git branch will be used if not specified.
     /// </remarks>
-    public string BranchName { get; set; } = string.Empty;
+    public string Branch { get; set; } = string.Empty;
 
     /// <summary>
     /// The name of the package.
     /// </summary>
-    public string PackageName { get; set; } = string.Empty;
+    public string Package { get; set; } = string.Empty;
 
     /// <summary>
     /// The directory containing the source files for the project.
     /// </summary>
-    public string ProjectDirectory { get; set; } = string.Empty;
+    public string Directory { get; set; } = string.Empty;
 
     /// <summary>
     /// The URL of the NuGet feed.
@@ -42,7 +42,7 @@ public class VersioningTask : Task
     /// <summary>
     /// An optional authentication token for the NuGet feed.
     /// </summary>
-    public string AuthToken { get; set; } = string.Empty;
+    public string Token { get; set; } = string.Empty;
 
     /// <summary>
     /// The version.
@@ -67,20 +67,20 @@ public class VersioningTask : Task
     {
         try
         {
-            if (string.IsNullOrEmpty(PackageName))
+            if (string.IsNullOrEmpty(Package))
             {
                 Log.LogError("VersioningTask requires PackageName to be set.");
                 return false;
             }
-            if (string.IsNullOrEmpty(ProjectDirectory))
+            if (string.IsNullOrEmpty(Directory))
             {
                 Log.LogError("VersioningTask requires ProjectDirectory to be set.");
                 return false;
             }
             if (!string.IsNullOrEmpty(Feed))
                 Environment.SetEnvironmentVariable("PACKAGES__FEED", Feed);
-            if (!string.IsNullOrEmpty(AuthToken))
-                Environment.SetEnvironmentVariable("PACKAGES__AUTHTOKEN", AuthToken);
+            if (!string.IsNullOrEmpty(Token))
+                Environment.SetEnvironmentVariable("PACKAGES__TOKEN", Token);
             IHost host = Host.CreateDefaultBuilder()
                 .ConfigureLogging((_, logging) => logging
                     .ClearProviders()
@@ -92,9 +92,9 @@ public class VersioningTask : Task
             VersioningActivity activity = host.Services.GetRequiredService<VersioningActivity>();
             VersioningActivityOptions options = new()
             {
-                BranchName = BranchName,
-                PackageName = PackageName,
-                ProjectDirectory = ProjectDirectory
+                Branch = Branch,
+                Package = Package,
+                Directory = Directory
             };
             Task<SemanticVersion?> task = activity.Execute(options);
             task.Wait();

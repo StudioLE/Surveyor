@@ -14,15 +14,15 @@ public class VersioningActivityOptions
     /// <summary>
     /// The name of the branch.
     /// </summary>
-    public string BranchName { get; set; } = string.Empty;
+    public string Branch { get; set; } = string.Empty;
 
     /// <summary>
     /// The name of the package.
     /// </summary>
-    public string PackageName { get; set; } = string.Empty;
+    public string Package { get; set; } = string.Empty;
 
     /// <summary>
     /// The directory containing the source files for the project.
     /// </summary>
-    public string ProjectDirectory { get; set; } = string.Empty;
+    public string Directory { get; set; } = string.Empty;
 }

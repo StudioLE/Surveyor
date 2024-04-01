@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SurveyorBranchName>alpha</SurveyorBranchName>
+    <SurveyorBranch>alpha</SurveyorBranch>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CI)' != 'true'">
