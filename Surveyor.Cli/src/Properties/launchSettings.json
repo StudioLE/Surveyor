@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Surveyor.Cli": {
+    "VersioningActivity": {
       "commandName": "Project",
-      "commandLineArgs": "--Versioning:BranchName alpha --Versioning:PackageName \"\" --Versioning:ProjectDirectory \"\"",
+      "commandLineArgs": "version --Versioning:BranchName alpha --Versioning:PackageName \"\" --Versioning:ProjectDirectory \"\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
       }
