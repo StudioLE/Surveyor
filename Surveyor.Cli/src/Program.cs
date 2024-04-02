@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Surveyor.Hosting;
 using Surveyor.Versioning;
@@ -12,6 +13,7 @@ public class Program
     public static async Task Main(string[] args)
     {
         IHost host = Host.CreateDefaultBuilder(args)
+            .ConfigureLogging(logging => logging.ClearProviders())
             .ConfigureServices((_, services) => services
                 .AddSurveyorServices()
                 .AddSurveyorOptions())
