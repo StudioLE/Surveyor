@@ -39,15 +39,8 @@ public class Program
         IOptions<VersioningActivityOptions> options = services.GetRequiredService<IOptions<VersioningActivityOptions>>();
         SemanticVersion? versionQuery = await activity.Execute(options.Value);
         if (versionQuery is SemanticVersion version)
-        {
             Console.WriteLine(version.ToString());
-            Environment.Exit(0);
-        }
-        else
-        {
-            Console.Error.WriteLine("Failed to determine the latest version of the package.");
-            Environment.Exit(1);
-        }
+        Environment.Exit(0);
     }
 
     private static Task ExecuteReleaseNotes(IServiceProvider services)
