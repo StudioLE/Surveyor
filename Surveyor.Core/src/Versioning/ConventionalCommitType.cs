@@ -33,6 +33,11 @@ public readonly struct ConventionalCommitType() : IEquatable<ConventionalCommitT
     /// </summary>
     public ReleaseType Release { get; init; } = ReleaseType.None;
 
+    /// <summary>
+    /// The priority to order by.
+    /// </summary>
+    public int Priority { get; init; } = 0;
+
     /// <inheritdoc />
     public override string ToString()
     {

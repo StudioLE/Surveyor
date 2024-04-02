@@ -57,21 +57,24 @@ public class ConventionalCommitTypeProvider
                 Id = "major",
                 Name = "Major Improvements",
                 Description = "A major release",
-                Release = ReleaseType.Major
+                Release = ReleaseType.Major,
+                Priority = 15
             },
             new()
             {
                 Id = "breaking",
                 Name = "Breaking Changes",
                 Description = "A breaking change",
-                Release = ReleaseType.Major
+                Release = ReleaseType.Major,
+                Priority = 14
             },
             new()
             {
                 Id = "minor",
                 Name = "Minor Improvements",
                 Description = "A minor release",
-                Release = ReleaseType.Minor
+                Release = ReleaseType.Minor,
+                Priority = 13
             },
             new()
             {
@@ -79,14 +82,16 @@ public class ConventionalCommitTypeProvider
                 AlternativeIds = ["feature"],
                 Name = "New Features",
                 Description = "A new feature",
-                Release = ReleaseType.Minor
+                Release = ReleaseType.Minor,
+                Priority = 12
             },
             new()
             {
                 Id = "patch",
                 Name = "Patch Improvements",
                 Description = "A patch release",
-                Release = ReleaseType.Patch
+                Release = ReleaseType.Patch,
+                Priority = 11
             },
             new()
             {
@@ -94,42 +99,48 @@ public class ConventionalCommitTypeProvider
                 AlternativeIds = ["bug"],
                 Name = "Bug Fixes",
                 Description = "A bug fix",
-                Release = ReleaseType.Patch
+                Release = ReleaseType.Patch,
+                Priority = 10
             },
             new()
             {
                 Id = "perf",
                 Name = "Performance Improvements",
                 Description = "A code change that improves performance",
-                Release = ReleaseType.Patch
+                Release = ReleaseType.Patch,
+                Priority = 9
             },
             new()
             {
                 Id = "build",
                 Name = "Build Improvements",
                 Description = "Changes that affect the build system",
-                Release = ReleaseType.Patch
+                Release = ReleaseType.Patch,
+                Priority = 8
             },
             new()
             {
                 Id = "deps",
                 Name = "Dependency Improvements",
                 Description = "Changes to dependencies",
-                Release = ReleaseType.Patch
+                Release = ReleaseType.Patch,
+                Priority = 7
             },
             new()
             {
                 Id = "docs",
                 Name = "Documentation Improvements",
                 Description = "Changes affecting the documentation, including xml-doc",
-                Release = ReleaseType.Patch
+                Release = ReleaseType.Patch,
+                Priority = 6
             },
             new()
             {
                 Id = "revert",
                 Name = "Reversions",
                 Description = "Reverting of previous changes",
-                Release = ReleaseType.Patch
+                Release = ReleaseType.Patch,
+                Priority = 5
             },
             new()
             {
@@ -137,35 +148,40 @@ public class ConventionalCommitTypeProvider
                 AlternativeIds = ["styles"],
                 Name = "Style Improvements",
                 Description = "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)",
-                Release = ReleaseType.None
+                Release = ReleaseType.None,
+                Priority = 4
             },
             new()
             {
                 Id = "refactor",
                 Name = "Refactors",
                 Description = "A code change that neither fixes a bug nor adds a feature",
-                Release = ReleaseType.None
+                Release = ReleaseType.None,
+                Priority = 3
             },
             new()
             {
                 Id = "test",
                 Name = "Test Improvements",
                 Description = "Adding, removing or revising tests",
-                Release = ReleaseType.None
+                Release = ReleaseType.None,
+                Priority = 2
             },
             new()
             {
                 Id = "ci",
                 Name = "Continuous Integration Improvements",
                 Description = "Changes to the CI pipeline",
-                Release = ReleaseType.None
+                Release = ReleaseType.None,
+                Priority = 1
             },
             new()
             {
                 Id = "chore",
                 Name = "Chores",
                 Description = "Other changes that don't affect the meaning of the code",
-                Release = ReleaseType.None
+                Release = ReleaseType.None,
+                Priority = 0
             }
 
         };

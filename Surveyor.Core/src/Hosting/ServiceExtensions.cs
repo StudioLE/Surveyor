@@ -23,7 +23,10 @@ public static class ServiceExtensions
             .AddTransient<IReleaseTypeStrategy, ReleaseTypeStrategy>()
             .AddTransient<PackageApi>()
             .AddTransient<GitCli>()
-            .AddTransient<IReleaseStreamProvider, ReleaseStreamProvider>();
+            .AddTransient<IReleaseStreamProvider, ReleaseStreamProvider>()
+            .AddTransient<ReleaseNotesActivity>()
+            .AddTransient<ConventionalCommitTypeProvider>()
+            .AddTransient<IReleaseNotesFactory, ReleaseNotesByScopeFactory>();
     }
 
     /// <summary>

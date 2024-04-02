@@ -71,6 +71,29 @@
 
 # Global Improvements
 
+### New Features
+
+> [!WARNING]
+> <details>
+> <summary>Breaking Change: <strong>allow provided config object to extend other configs</strong>  7a7a7a7a</summary>
+> <br>
+> 
+> `extends` key in config file is now used for extending other config files
+> 
+> ```yaml
+> BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+> ```
+> </details>
+
+### Documentation Improvements
+
+> <details>
+> <summary><strong>correct spelling of CHANGELOG</strong> 6a6a6a6a</summary>
+> <br>
+> 
+> No further information provided...
+> </details>
+
 ### Chores
 
 > <details>
@@ -96,29 +119,6 @@
 > 
 > ```yaml
 > BREAKING CHANGE: use JavaScript features not available in Node 6.
-> ```
-> </details>
-
-### Documentation Improvements
-
-> <details>
-> <summary><strong>correct spelling of CHANGELOG</strong> 6a6a6a6a</summary>
-> <br>
-> 
-> No further information provided...
-> </details>
-
-### New Features
-
-> [!WARNING]
-> <details>
-> <summary>Breaking Change: <strong>allow provided config object to extend other configs</strong>  7a7a7a7a</summary>
-> <br>
-> 
-> `extends` key in config file is now used for extending other config files
-> 
-> ```yaml
-> BREAKING CHANGE: `extends` key in config file is now used for extending other config files
 > ```
 > </details>
 

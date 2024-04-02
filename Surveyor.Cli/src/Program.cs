@@ -27,6 +27,7 @@ public class Program
         Task task = commands.First() switch
         {
             "version" => ExecuteVersioning(host.Services),
+            "release-notes" => ExecuteReleaseNotes(host.Services),
             _ => InvalidCommand()
         };
         await task;
@@ -47,6 +48,24 @@ public class Program
             Console.Error.WriteLine("Failed to determine the latest version of the package.");
             Environment.Exit(1);
         }
+    }
+
+    private static Task ExecuteReleaseNotes(IServiceProvider services)
+    {
+        ReleaseNotesActivity activity = services.GetRequiredService<ReleaseNotesActivity>();
+        IOptions<ReleaseNotesActivityOptions> options = services.GetRequiredService<IOptions<ReleaseNotesActivityOptions>>();
+        string releaseNotes = activity.Execute(options.Value);
+        if (!string.IsNullOrEmpty(releaseNotes))
+        {
+            Console.WriteLine(releaseNotes);
+            Environment.Exit(0);
+        }
+        else
+        {
+            Console.Error.WriteLine("Failed to produce release notes.");
+            Environment.Exit(1);
+        }
+        return Task.CompletedTask;
     }
 
     private static Task InvalidCommand()

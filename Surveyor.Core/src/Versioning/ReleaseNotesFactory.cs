@@ -6,7 +6,14 @@ namespace Surveyor.Versioning;
 /// <summary>
 /// Create release notes from a collection of conventional commits.
 /// </summary>
-public class ReleaseNotesByScopeFactory : IFactory<IReadOnlyCollection<ConventionalCommit>, string>
+public interface IReleaseNotesFactory : IFactory<IReadOnlyCollection<ConventionalCommit>, string>
+{
+}
+
+/// <summary>
+/// Create release notes from a collection of conventional commits.
+/// </summary>
+public class ReleaseNotesByScopeFactory : IReleaseNotesFactory
 {
     private readonly ConventionalCommitTypeProvider _types;
 
@@ -39,8 +46,8 @@ public class ReleaseNotesByScopeFactory : IFactory<IReadOnlyCollection<Conventio
         if (string.IsNullOrEmpty(scope))
             scope = "Global Improvements";
         string body = commits
-            .OrderByDescending(x => x.Release)
-            .GroupBy(x => x.TypeId)
+            .GroupBy(x => _types.Get(x.TypeId))
+            .OrderByDescending(x => x.Key?.Priority ?? -1)
             .Select(x => CreatePerTypeSections(x.Key, x.ToArray()))
             .Join();
         return $"""
@@ -50,9 +57,9 @@ public class ReleaseNotesByScopeFactory : IFactory<IReadOnlyCollection<Conventio
                 """;
     }
 
-    private string CreatePerTypeSections(string type, IReadOnlyCollection<ConventionalCommit> commits)
+    private string CreatePerTypeSections(ConventionalCommitType? type, IReadOnlyCollection<ConventionalCommit> commits)
     {
-        string typeFriendlyName = _types.Get(type)?.Name ?? "Other Improvements";
+        string typeFriendlyName = type?.Name ?? "Other Improvements";
         string body = commits
             .Select(Create)
             .Join();

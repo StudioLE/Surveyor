@@ -2,7 +2,14 @@
   "profiles": {
     "VersioningActivity": {
       "commandName": "Project",
-      "commandLineArgs": "version --Versioning:BranchName alpha --Versioning:PackageName \"\" --Versioning:ProjectDirectory \"\"",
+      "commandLineArgs": "version --Versioning:Branch alpha --Versioning:Package \"\" --Versioning:Directory \"\"",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production"
+      }
+    },
+    "ReleaseNotesActivity": {
+      "commandName": "Project",
+      "commandLineArgs": "release-notes --Releases:Branch alpha",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
       }
