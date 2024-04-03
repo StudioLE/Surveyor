@@ -6,7 +6,7 @@
     <SurveyorDirectory Condition="'$(SurveyorDirectory)' == ''">$(MSBuildProjectDirectory)</SurveyorDirectory>
   </PropertyGroup>
 
-  <Target Name="BuildVersioning" BeforeTargets="BeforeBuild" Condition="Exists('$(SurveyorAssemblyPath)') AND '$(Configuration)' == 'Release'">
+  <Target Name="BuildVersioning" BeforeTargets="BeforeBuild;GenerateNuspec" Condition="Exists('$(SurveyorAssemblyPath)') AND '$(Configuration)' == 'Release'">
     <VersioningTask
       Package="$(SurveyorPackage)"
       Directory="$(SurveyorDirectory)"
@@ -22,7 +22,7 @@
     <Message Text="PackageVersion: $(PackageVersion)" Importance="high"/>
   </Target>
 
-  <Target Name="NoVersioning" BeforeTargets="BeforeBuild" Condition=" ! Exists('$(SurveyorAssemblyPath)')">
+  <Target Name="NoVersioning" BeforeTargets="BeforeBuild;GenerateNuspec" Condition=" ! Exists('$(SurveyorAssemblyPath)')">
     <Warning Text="Surveyor assembly not found: $(SurveyorAssemblyPath)"/>
     <Warning Text="Versioning has failed but build will continue."/>
   </Target>
