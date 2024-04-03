@@ -20,6 +20,7 @@ public static class ServiceExtensions
             .AddTransient<IChangedFileProvider, ChangedFileProvider>()
             .AddTransient<IPublishedVersionProvider, PublishedVersionProvider>()
             .AddTransient<IRepositoryVersionProvider, RepositoryVersionProvider>()
+            .AddTransient<IHeadVersionProvider, HeadVersionProvider>()
             .AddTransient<IReleaseTypeStrategy, ReleaseTypeStrategy>()
             .AddTransient<PackageApi>()
             .AddTransient<GitCli>()

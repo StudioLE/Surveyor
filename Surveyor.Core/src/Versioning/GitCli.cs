@@ -79,6 +79,19 @@ public class GitCli
     }
 
     /// <summary>
+    /// Get all the tags pointing at <paramref name="gitReference"/>.
+    /// </summary>
+    /// <returns>
+    /// A collection of tags.
+    /// </returns>
+    public IReadOnlyCollection<string> GetTagsPointingAt(string gitReference)
+    {
+        if (!ValidateGitReferenceArgument(gitReference))
+            throw new("Invalid branch name.");
+        return CliExecuteOrThrow($"tag --points-at \"{gitReference}\"");
+    }
+
+    /// <summary>
     /// Get the name of the current branch.
     /// </summary>
     /// <returns>

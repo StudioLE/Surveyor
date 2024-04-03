@@ -91,6 +91,7 @@ internal sealed class VersioningActivityTests
             // "2.0.0",
             // "2.1.0"
         ]));
+        MockHeadVersionProvider headVersionProvider = new([]);
         MockChangedFileProvider changedFileProvider = new([
             "Surveyor.Core/Versioning/VersioningActivity.cs"
         ]);
@@ -105,6 +106,7 @@ internal sealed class VersioningActivityTests
             publishedVersionProvider,
             repositoryVersionProvider,
             branchVersionProvider,
+            headVersionProvider,
             changedFileProvider,
             releaseTypeStrategy,
             releaseStreamProvider);
@@ -117,6 +119,100 @@ internal sealed class VersioningActivityTests
             Assert.That(version, Is.Null);
         else
             Assert.That(version.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task VersioningActivity_Execute_NoChanges_NotPublished()
+    {
+        // Arrange
+        ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
+        MockPublishedVersionProvider publishedVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1"
+            // "0.1.2"
+        ]));
+        MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1",
+            "0.1.2"
+        ]));
+        MockBranchVersionProvider branchVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1",
+            "0.1.2"
+        ]));
+        MockHeadVersionProvider headVersionProvider = new([]);
+        MockChangedFileProvider changedFileProvider = new([]);
+        ReleaseStreamProvider releaseStreamProvider = new();
+        MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Minor);
+        VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
+        options.Branch = "alpha";
+        options.Directory = Path.GetTempPath();
+        VersioningActivity activity = new(
+            logger,
+            null!,
+            publishedVersionProvider,
+            repositoryVersionProvider,
+            branchVersionProvider,
+            headVersionProvider,
+            changedFileProvider,
+            releaseTypeStrategy,
+            releaseStreamProvider);
+
+        // Act
+        SemanticVersion? version = await activity.Execute(options);
+
+        // Assert
+        Assert.That(version.ToString(), Is.EqualTo("0.1.1"));
+    }
+
+    [Test]
+    public async Task VersioningActivity_Execute_HeadTaggedButNotPublished()
+    {
+        // Arrange
+        ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
+        MockPublishedVersionProvider publishedVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1"
+            // "0.1.2"
+        ]));
+        MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1",
+            "0.1.2"
+        ]));
+        MockBranchVersionProvider branchVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1",
+            "0.1.2"
+        ]));
+        MockHeadVersionProvider headVersionProvider = new(CreateVersions([
+            "0.1.2"
+        ]));
+        MockChangedFileProvider changedFileProvider = new([
+            "Surveyor.Core/Versioning/VersioningActivity.cs"
+        ]);
+        ReleaseStreamProvider releaseStreamProvider = new();
+        MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Patch);
+        VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
+        options.Branch = "main";
+        options.Directory = Path.GetTempPath();
+        VersioningActivity activity = new(
+            logger,
+            null!,
+            publishedVersionProvider,
+            repositoryVersionProvider,
+            branchVersionProvider,
+            headVersionProvider,
+            changedFileProvider,
+            releaseTypeStrategy,
+            releaseStreamProvider);
+
+        // Act
+        SemanticVersion? version = await activity.Execute(options);
+
+        // Assert
+        Assert.That(version.ToString(), Is.EqualTo("0.1.2"));
     }
 
     private static SemanticVersion[] CreateVersions(string[] versions)

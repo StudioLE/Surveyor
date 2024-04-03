@@ -17,6 +17,7 @@ public class VersioningActivity
     private readonly IPublishedVersionProvider _publishedVersionProvider;
     private readonly IRepositoryVersionProvider _repositoryVersionProvider;
     private readonly IBranchVersionProvider _branchVersionProvider;
+    private readonly IHeadVersionProvider _headVersionProvider;
     private readonly IChangedFileProvider _changedFileProvider;
     private readonly IReleaseTypeStrategy _releaseTypeStrategy;
     private readonly IReleaseStreamProvider _releaseStreamProvider;
@@ -30,6 +31,7 @@ public class VersioningActivity
         IPublishedVersionProvider publishedVersionProvider,
         IRepositoryVersionProvider repositoryVersionProvider,
         IBranchVersionProvider branchVersionProvider,
+        IHeadVersionProvider headVersionProvider,
         IChangedFileProvider changedFileProvider,
         IReleaseTypeStrategy releaseTypeStrategy,
         IReleaseStreamProvider releaseStreamProvider)
@@ -40,6 +42,7 @@ public class VersioningActivity
         _publishedVersionProvider = publishedVersionProvider;
         _repositoryVersionProvider = repositoryVersionProvider;
         _branchVersionProvider = branchVersionProvider;
+        _headVersionProvider = headVersionProvider;
         _changedFileProvider = changedFileProvider;
         _releaseTypeStrategy = releaseTypeStrategy;
         _releaseStreamProvider = releaseStreamProvider;
@@ -88,15 +91,17 @@ public class VersioningActivity
             ? _releaseTypeStrategy.Get()
             : _releaseTypeStrategy.Get(latestPublishedVersionOnBranch!.Value);
         IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
-        SemanticVersion version = BumpFullVersion(latestVersionOnBranch, repositoryVersions, releaseType);
+        IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);
+        SemanticVersion version = BumpFullVersion(latestVersionOnBranch, repositoryVersions, headVersions, releaseType);
         return !releaseStream.IsPreRelease
             ? version
-            : BumpPreReleaseVersion(version, repositoryVersions, releaseStream);
+            : BumpPreReleaseVersion(version, repositoryVersions, headVersions, releaseStream);
     }
 
     private static SemanticVersion BumpFullVersion(
         SemanticVersion version,
         IReadOnlyCollection<SemanticVersion> repositoryVersions,
+        IReadOnlyCollection<SemanticVersion> headVersions,
         ReleaseType releaseType)
     {
         ReleaseType latestReleaseType = version.GetReleaseType();
@@ -109,7 +114,7 @@ public class VersioningActivity
             };
         if (releaseType > latestReleaseType)
             version = SemanticVersionHelpers.Bump(version, releaseType);
-        while (repositoryVersions.Contains(version))
+        while (repositoryVersions.Contains(version) && !headVersions.Contains(version))
             version = SemanticVersionHelpers.Bump(version, releaseType);
         return version;
     }
@@ -117,11 +122,12 @@ public class VersioningActivity
     private static SemanticVersion BumpPreReleaseVersion(
         SemanticVersion version,
         IReadOnlyCollection<SemanticVersion> repositoryVersions,
+        IReadOnlyCollection<SemanticVersion> headVersions,
         ReleaseStream releaseStream)
     {
         do
             version = SemanticVersionHelpers.BumpPreRelease(version, releaseStream.Id);
-        while (repositoryVersions.Contains(version));
+        while (repositoryVersions.Contains(version) && !headVersions.Contains(version));
         return version;
     }
 }
