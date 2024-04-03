@@ -70,9 +70,7 @@ public class VersioningActivity
         SemanticVersion latestVersionOnBranch = branchVersions.Count == 0
             ? new()
             : branchVersions.First();
-        IReadOnlyCollection<SemanticVersion> publishedVersions = string.IsNullOrEmpty(options.Package)
-            ? Array.Empty<SemanticVersion>()
-            : (await _publishedVersionProvider.Get(options.Package))
+        IReadOnlyCollection<SemanticVersion> publishedVersions = (await _publishedVersionProvider.Get(options.Package))
             .OrderByDescending(x => x)
             .ToArray();
         IReadOnlyCollection<SemanticVersion> publishedVersionsOnBranch = publishedVersions

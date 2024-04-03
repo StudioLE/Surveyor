@@ -33,6 +33,8 @@ public class PublishedVersionProvider : IPublishedVersionProvider
     /// <inheritdoc/>
     public async Task<IReadOnlyCollection<SemanticVersion>> Get(string packageName)
     {
-        return await _api.GetPackageVersions(packageName, true);
+        return string.IsNullOrEmpty(packageName)
+            ? Array.Empty<SemanticVersion>()
+            : await _api.GetPackageVersions(packageName, true);
     }
 }
