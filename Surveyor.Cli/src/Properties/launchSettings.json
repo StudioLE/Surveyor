@@ -1,8 +1,15 @@
 {
   "profiles": {
-    "VersioningActivity": {
+    "ProjectVersioningActivity": {
       "commandName": "Project",
-      "commandLineArgs": "version --Versioning:Branch alpha --Versioning:Package \"\" --Versioning:Directory \"\"",
+      "commandLineArgs": "project-version --Versioning:Branch main --Versioning:Package \"StudioLE.Example\" --Versioning:Directory \"/e/Repos/C#/Example/StudioLE.Example.Cli/src\"",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production"
+      }
+    },
+    "RepositoryVersioningActivity": {
+      "commandName": "Project",
+      "commandLineArgs": "version --Versioning:Branch alpha --Versioning:Package \"\" --Versioning:Directory \"/e/Repos/C#/Example\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
       }
@@ -10,13 +17,6 @@
     "ReleaseNotesActivity": {
       "commandName": "Project",
       "commandLineArgs": "release-notes --Releases:Branch alpha",
-      "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Production"
-      }
-    },
-    "VersioningActivityExample": {
-      "commandName": "Project",
-      "commandLineArgs": "version --Versioning:Branch alpha --Versioning:Package \"\" --Versioning:Directory \"/e/Repos/C#/Example\" --Git:Directory \"/e/Repos/C#/Example\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
       }

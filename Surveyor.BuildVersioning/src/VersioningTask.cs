@@ -69,12 +69,12 @@ public class VersioningTask : Task
         {
             if (string.IsNullOrEmpty(Package))
             {
-                Log.LogError("VersioningTask requires PackageName to be set.");
+                Log.LogError($"{nameof(VersioningTask)} requires {nameof(Package)} to be set.");
                 return false;
             }
             if (string.IsNullOrEmpty(Directory))
             {
-                Log.LogError("VersioningTask requires ProjectDirectory to be set.");
+                Log.LogError($"{nameof(VersioningTask)} requires {nameof(Directory)} to be set.");
                 return false;
             }
             if (!string.IsNullOrEmpty(Feed))
@@ -84,7 +84,8 @@ public class VersioningTask : Task
             IHost host = Host.CreateDefaultBuilder()
                 .ConfigureLogging((_, logging) => logging
                     .ClearProviders()
-                    .AddCache())
+                    .AddCache()
+                    .SetMinimumLevel(LogLevel.Debug))
                 .ConfigureServices((_, services) => services
                     .AddSurveyorServices()
                     .AddSurveyorOptions())

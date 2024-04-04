@@ -85,14 +85,19 @@ public class ProjectVersioningActivity
         IReadOnlyCollection<SemanticVersion> publishedVersions = (await _publishedVersionProvider.Get(options.Package))
             .OrderByDescending(x => x)
             .ToArray();
+        if(publishedVersions.Count == 0)
+            _logger.LogWarning($"[{options.Package}] No published version.");
         IReadOnlyCollection<SemanticVersion> publishedVersionsOnBranch = publishedVersions
             .Where(x => branchVersions.Contains(x))
             .ToArray();
         SemanticVersion? latestPublishedVersionOnBranch = publishedVersionsOnBranch.FirstOrNull();
+        if(publishedVersionsOnBranch.Count == 0)
+            _logger.LogWarning($"[{options.Package}] No published version on branch.");
+        else
+            _logger.LogDebug($"[{options.Package}] Last published version on branch: {latestPublishedVersionOnBranch}.");
         IReadOnlyCollection<string> changedFiles = publishedVersionsOnBranch.Count == 0
             ? _changedFileProvider.Get(options.Directory).ToArray()
             : _changedFileProvider.Get(options.Directory, latestPublishedVersionOnBranch!.Value).ToArray();
-        _logger.LogDebug($"[{options.Package}] Last published version on branch: {latestPublishedVersionOnBranch}.");
         if (!changedFiles.Any())
         {
             _logger.LogInformation($"[{options.Package}] No changes have been made since the last published version.");
