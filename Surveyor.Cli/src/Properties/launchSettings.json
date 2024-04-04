@@ -13,6 +13,13 @@
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
       }
+    },
+    "VersioningActivityExample": {
+      "commandName": "Project",
+      "commandLineArgs": "version --Versioning:Branch alpha --Versioning:Package \"\" --Versioning:Directory \"/e/Repos/C#/Example\" --Git:Directory \"/e/Repos/C#/Example\"",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production"
+      }
     }
   }
 }

@@ -67,9 +67,16 @@ public class VersioningActivity
             .Get(options.Branch)
             .OrderByDescending(x => x)
             .ToArray();
-        SemanticVersion latestVersionOnBranch = branchVersions.Count == 0
-            ? new()
-            : branchVersions.First();
+        return string.IsNullOrEmpty(options.Package)
+            ? ExecuteForAllProjects(options, releaseStream, branchVersions)
+            : await ExecuteForSingleProject(options, releaseStream, branchVersions);
+    }
+
+    private async Task<SemanticVersion?> ExecuteForSingleProject(
+        VersioningActivityOptions options,
+        ReleaseStream releaseStream,
+        IReadOnlyCollection<SemanticVersion> branchVersions)
+    {
         IReadOnlyCollection<SemanticVersion> publishedVersions = (await _publishedVersionProvider.Get(options.Package))
             .OrderByDescending(x => x)
             .ToArray();
@@ -90,18 +97,38 @@ public class VersioningActivity
             : _releaseTypeStrategy.Get(latestPublishedVersionOnBranch!.Value);
         IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
         IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);
-        SemanticVersion version = BumpFullVersion(latestVersionOnBranch, repositoryVersions, headVersions, releaseType);
+        SemanticVersion version = BumpFullVersion(branchVersions, repositoryVersions, headVersions, releaseType);
+        return !releaseStream.IsPreRelease
+            ? version
+            : BumpPreReleaseVersion(version, repositoryVersions, headVersions, releaseStream);
+    }
+
+    private SemanticVersion? ExecuteForAllProjects(
+        VersioningActivityOptions options,
+        ReleaseStream releaseStream,
+        IReadOnlyCollection<SemanticVersion> branchVersions)
+    {
+        SemanticVersion? latestVersionOnBranch = branchVersions.FirstOrNull();
+        ReleaseType releaseType = branchVersions.Count == 0
+            ? _releaseTypeStrategy.Get()
+            : _releaseTypeStrategy.Get(latestVersionOnBranch!.Value);
+        IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
+        IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);
+        SemanticVersion version = BumpFullVersion(branchVersions, repositoryVersions, headVersions, releaseType);
         return !releaseStream.IsPreRelease
             ? version
             : BumpPreReleaseVersion(version, repositoryVersions, headVersions, releaseStream);
     }
 
     private static SemanticVersion BumpFullVersion(
-        SemanticVersion version,
+        IReadOnlyCollection<SemanticVersion> branchVersions,
         IReadOnlyCollection<SemanticVersion> repositoryVersions,
         IReadOnlyCollection<SemanticVersion> headVersions,
         ReleaseType releaseType)
     {
+        SemanticVersion version = branchVersions.Count == 0
+            ? new()
+            : branchVersions.First();
         ReleaseType latestReleaseType = version.GetReleaseType();
         if (version.IsPreRelease())
             version = new()

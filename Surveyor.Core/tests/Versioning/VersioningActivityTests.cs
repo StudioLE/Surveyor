@@ -121,8 +121,9 @@ internal sealed class VersioningActivityTests
             Assert.That(version.ToString(), Is.EqualTo(expected));
     }
 
-    [Test]
-    public async Task VersioningActivity_Execute_NoChanges_NotPublished()
+    [TestCase(true, "0.1.1")]
+    [TestCase(false, "0.1.3-alpha.1")]
+    public async Task VersioningActivity_Execute_NoProjectChanges_HeadNotTagged(bool isSingleProject, string expected)
     {
         // Arrange
         ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
@@ -144,10 +145,13 @@ internal sealed class VersioningActivityTests
         MockHeadVersionProvider headVersionProvider = new([]);
         MockChangedFileProvider changedFileProvider = new([]);
         ReleaseStreamProvider releaseStreamProvider = new();
-        MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Minor);
+        MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Patch);
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
         options.Branch = "alpha";
         options.Directory = Path.GetTempPath();
+        options.Package = isSingleProject
+            ? "StudioLE.Example"
+            : string.Empty;
         VersioningActivity activity = new(
             logger,
             null!,
@@ -163,11 +167,12 @@ internal sealed class VersioningActivityTests
         SemanticVersion? version = await activity.Execute(options);
 
         // Assert
-        Assert.That(version.ToString(), Is.EqualTo("0.1.1"));
+        Assert.That(version.ToString(), Is.EqualTo(expected));
     }
 
-    [Test]
-    public async Task VersioningActivity_Execute_HeadTaggedButNotPublished()
+    [TestCase(true, "0.1.2")]
+    [TestCase(false, "0.1.2")]
+    public async Task VersioningActivity_Execute_HeadTaggedButNotPublished(bool isSingleProject, string expected)
     {
         // Arrange
         ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
@@ -197,6 +202,9 @@ internal sealed class VersioningActivityTests
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
         options.Branch = "main";
         options.Directory = Path.GetTempPath();
+        options.Package = isSingleProject
+            ? "StudioLE.Example"
+            : string.Empty;
         VersioningActivity activity = new(
             logger,
             null!,
@@ -212,7 +220,7 @@ internal sealed class VersioningActivityTests
         SemanticVersion? version = await activity.Execute(options);
 
         // Assert
-        Assert.That(version.ToString(), Is.EqualTo("0.1.2"));
+        Assert.That(version.ToString(), Is.EqualTo(expected));
     }
 
     private static SemanticVersion[] CreateVersions(string[] versions)
