@@ -28,7 +28,7 @@ public class Program
         }
         Task task = commands.First() switch
         {
-            "version" => ExecuteProjectVersioning(host.Services),
+            "version" => ExecuteRepositoryVersioning(host.Services),
             "project-version" => ExecuteProjectVersioning(host.Services),
             "release-notes" => ExecuteReleaseNotes(host.Services),
             _ => InvalidCommand()
@@ -46,7 +46,7 @@ public class Program
         Environment.Exit(0);
     }
 
-    private static void ExecuteRepositoryVersioning(IServiceProvider services)
+    private static Task ExecuteRepositoryVersioning(IServiceProvider services)
     {
         RepositoryVersioningActivity activity = services.GetRequiredService<RepositoryVersioningActivity>();
         IOptions<VersioningActivityOptions> options = services.GetRequiredService<IOptions<VersioningActivityOptions>>();
@@ -54,6 +54,7 @@ public class Program
         if (versionQuery is SemanticVersion version)
             Console.WriteLine(version.ToString());
         Environment.Exit(0);
+        return Task.CompletedTask;
     }
 
     private static Task ExecuteReleaseNotes(IServiceProvider services)

@@ -47,22 +47,26 @@ public class RepositoryVersioningActivity
     /// <returns></returns>
     public SemanticVersion? Execute(VersioningActivityOptions options)
     {
+        if (options.Package != string.Empty)
+        {
+            _logger.LogError($"The {nameof(options.Package)} option should be empty.");
+            return null;
+        }
+        if (string.IsNullOrEmpty(options.Directory))
+            options.Directory = Directory.GetCurrentDirectory();
+        if (!Directory.Exists(options.Directory))
+        {
+            _logger.LogError($"The {nameof(options.Directory)} does not exist: {options.Directory}.");
+            return null;
+        }
+        if(_git.RootDirectory != options.Directory)
+            _git.SetRootDirectory(options.Directory);
         if (string.IsNullOrEmpty(options.Branch))
             options.Branch = _git.GetCurrentBranch();
-        if (string.IsNullOrEmpty(options.Directory))
-        {
-            _logger.LogWarning($"[{options.Package}] The directory is required.");
-            return null;
-        }
-        if (string.IsNullOrEmpty(options.Directory))
-        {
-            _logger.LogWarning($"[{options.Package}] The directory is required.");
-            return null;
-        }
         ReleaseStream? releaseStreamQuery = _releaseStreamProvider.Get(options.Branch);
         if (releaseStreamQuery is not ReleaseStream releaseStream)
         {
-            _logger.LogInformation($"[{options.Package}] The {options.Branch} branch is not a release stream.");
+            _logger.LogInformation($"The {options.Branch} branch is not a release stream.");
             return null;
         }
         IReadOnlyCollection<SemanticVersion> branchVersions = _branchVersionProvider
@@ -70,11 +74,11 @@ public class RepositoryVersioningActivity
             .OrderByDescending(x => x)
             .ToArray();
         SemanticVersion? latestFullVersionOnBranch = branchVersions.FirstOrNull(x => !x.IsPreRelease());
-        _logger.LogDebug($"[{options.Package}] Last version on branch: {latestFullVersionOnBranch}.");
+        _logger.LogDebug($"Last version on branch: {latestFullVersionOnBranch}.");
         ReleaseType releaseType = branchVersions.Count == 0
             ? _releaseTypeStrategy.Get()
             : _releaseTypeStrategy.Get(latestFullVersionOnBranch!.Value);
-        _logger.LogDebug($"[{options.Package}] Release type: {releaseType}.");
+        _logger.LogDebug($"Release type: {releaseType}.");
         IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
         IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);
         SemanticVersion version = BumpFullVersion(branchVersions, repositoryVersions, headVersions, releaseType);
