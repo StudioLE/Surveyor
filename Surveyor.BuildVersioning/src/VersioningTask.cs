@@ -89,7 +89,7 @@ public class VersioningTask : Task
                     .AddSurveyorServices()
                     .AddSurveyorOptions())
                 .Build();
-            VersioningActivity activity = host.Services.GetRequiredService<VersioningActivity>();
+            ProjectVersioningActivity activity = host.Services.GetRequiredService<ProjectVersioningActivity>();
             VersioningActivityOptions options = new()
             {
                 Branch = Branch,

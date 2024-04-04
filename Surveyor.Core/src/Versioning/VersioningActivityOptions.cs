@@ -1,7 +1,7 @@
 namespace Surveyor.Versioning;
 
 /// <summary>
-/// Options for <see cref="VersioningActivity"/>.
+/// Options for <see cref="ProjectVersioningActivity"/>.
 /// </summary>
 public class VersioningActivityOptions
 {
@@ -12,12 +12,15 @@ public class VersioningActivityOptions
     public const string Section = "Versioning";
 
     /// <summary>
-    /// The name of the branch.
+    /// The optional branch name.
+    /// Defaults to the current branch.
     /// </summary>
     public string Branch { get; set; } = string.Empty;
 
     /// <summary>
-    /// The name of the package.
+    /// The package name.
+    /// Required for <see cref="ProjectVersioningActivity"/>.
+    /// Not required for <see cref="RepositoryVersioningActivity"/>.
     /// </summary>
     public string Package { get; set; } = string.Empty;
 

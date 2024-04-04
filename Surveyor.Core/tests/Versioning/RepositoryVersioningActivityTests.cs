@@ -9,11 +9,11 @@ using Surveyor.Versioning;
 
 namespace Surveyor.Core.Tests.Versioning;
 
-internal sealed class VersioningActivityTests
+internal sealed class RepositoryVersioningActivityTests
 {
     private readonly IServiceProvider _services;
 
-    public VersioningActivityTests()
+    public RepositoryVersioningActivityTests()
     {
         IHost host = Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) => services
@@ -25,14 +25,14 @@ internal sealed class VersioningActivityTests
 
     [Test]
     [Explicit("Requires configuration")]
-    public async Task VersioningActivity_Execute_DI()
+    public void RepositoryVersioningActivity_Execute_DI()
     {
         // Arrange
-        VersioningActivity activity = _services.GetRequiredService<VersioningActivity>();
+        RepositoryVersioningActivity activity = _services.GetRequiredService<RepositoryVersioningActivity>();
         IOptions<VersioningActivityOptions> options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>();
 
         // Act
-        SemanticVersion? version = await activity.Execute(options.Value);
+        SemanticVersion? version = activity.Execute(options.Value);
 
         // Assert
         Assert.That(version, Is.Not.Null);
@@ -48,23 +48,10 @@ internal sealed class VersioningActivityTests
     [TestCase(ReleaseType.Patch, "wip", null)]
     [TestCase(ReleaseType.Minor, "main", "1.4.0")]
     [TestCase(ReleaseType.Major, "main", "3.0.0")]
-    public async Task VersioningActivity_Execute(ReleaseType releaseType, string branchName, string? expected)
+    public void RepositoryVersioningActivity_Execute(ReleaseType releaseType, string branchName, string? expected)
     {
         // Arrange
-        ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
-        MockPublishedVersionProvider publishedVersionProvider = new(CreateVersions([
-            "0.1.0",
-            "0.1.1",
-            // "0.1.2",
-            "1.0.0",
-            "1.2.3",
-            "1.2.4-alpha.1",
-            "1.2.4-alpha.2",
-            // "1.2.4-alpha.3",
-            // "1.3.0",
-            "2.0.0"
-            // "2.1.0"
-        ]));
+        ILogger<RepositoryVersioningActivity> logger = _services.GetRequiredService<ILogger<RepositoryVersioningActivity>>();
         MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
             "0.1.0",
             "0.1.1",
@@ -92,27 +79,28 @@ internal sealed class VersioningActivityTests
             // "2.1.0"
         ]));
         MockHeadVersionProvider headVersionProvider = new([]);
-        MockChangedFileProvider changedFileProvider = new([
-            "Surveyor.Core/Versioning/VersioningActivity.cs"
-        ]);
         ReleaseStreamProvider releaseStreamProvider = new();
         MockReleaseTypeStrategy releaseTypeStrategy = new(releaseType);
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
         options.Branch = branchName;
         options.Directory = Path.GetTempPath();
-        VersioningActivity activity = new(
+        options.Package = string.Empty;
+        GitCli git = new(new GitCliOptions
+        {
+            Directory = options.Directory,
+            SkipValidation = true
+        });
+        RepositoryVersioningActivity activity = new(
             logger,
-            null!,
-            publishedVersionProvider,
+            git,
             repositoryVersionProvider,
             branchVersionProvider,
             headVersionProvider,
-            changedFileProvider,
             releaseTypeStrategy,
             releaseStreamProvider);
 
         // Act
-        SemanticVersion? version = await activity.Execute(options);
+        SemanticVersion? version = activity.Execute(options);
 
         // Assert
         if (expected is null)
@@ -121,17 +109,11 @@ internal sealed class VersioningActivityTests
             Assert.That(version.ToString(), Is.EqualTo(expected));
     }
 
-    [TestCase(true, "0.1.1")]
-    [TestCase(false, "0.1.3-alpha.1")]
-    public async Task VersioningActivity_Execute_NoProjectChanges_HeadNotTagged(bool isSingleProject, string expected)
+    [Test]
+    public void RepositoryVersioningActivity_Execute_NoProjectChanges_HeadNotTagged()
     {
         // Arrange
-        ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
-        MockPublishedVersionProvider publishedVersionProvider = new(CreateVersions([
-            "0.1.0",
-            "0.1.1"
-            // "0.1.2"
-        ]));
+        ILogger<RepositoryVersioningActivity> logger = _services.GetRequiredService<ILogger<RepositoryVersioningActivity>>();
         MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
             "0.1.0",
             "0.1.1",
@@ -143,44 +125,38 @@ internal sealed class VersioningActivityTests
             "0.1.2"
         ]));
         MockHeadVersionProvider headVersionProvider = new([]);
-        MockChangedFileProvider changedFileProvider = new([]);
         ReleaseStreamProvider releaseStreamProvider = new();
         MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Patch);
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
         options.Branch = "alpha";
         options.Directory = Path.GetTempPath();
-        options.Package = isSingleProject
-            ? "StudioLE.Example"
-            : string.Empty;
-        VersioningActivity activity = new(
+        options.Package = string.Empty;
+        GitCli git = new(new GitCliOptions
+        {
+            Directory = options.Directory,
+            SkipValidation = true
+        });
+        RepositoryVersioningActivity activity = new(
             logger,
-            null!,
-            publishedVersionProvider,
+            git,
             repositoryVersionProvider,
             branchVersionProvider,
             headVersionProvider,
-            changedFileProvider,
             releaseTypeStrategy,
             releaseStreamProvider);
 
         // Act
-        SemanticVersion? version = await activity.Execute(options);
+        SemanticVersion? version = activity.Execute(options);
 
         // Assert
-        Assert.That(version.ToString(), Is.EqualTo(expected));
+        Assert.That(version.ToString(), Is.EqualTo("0.1.3-alpha.1"));
     }
 
-    [TestCase(true, "0.1.2")]
-    [TestCase(false, "0.1.2")]
-    public async Task VersioningActivity_Execute_HeadTaggedButNotPublished(bool isSingleProject, string expected)
+    [Test]
+    public void VersioningActivity_Execute_HeadTaggedButNotPublished()
     {
         // Arrange
-        ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
-        MockPublishedVersionProvider publishedVersionProvider = new(CreateVersions([
-            "0.1.0",
-            "0.1.1"
-            // "0.1.2"
-        ]));
+        ILogger<RepositoryVersioningActivity> logger = _services.GetRequiredService<ILogger<RepositoryVersioningActivity>>();
         MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
             "0.1.0",
             "0.1.1",
@@ -194,45 +170,38 @@ internal sealed class VersioningActivityTests
         MockHeadVersionProvider headVersionProvider = new(CreateVersions([
             "0.1.2"
         ]));
-        MockChangedFileProvider changedFileProvider = new([
-            "Surveyor.Core/Versioning/VersioningActivity.cs"
-        ]);
         ReleaseStreamProvider releaseStreamProvider = new();
         MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Patch);
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
         options.Branch = "main";
         options.Directory = Path.GetTempPath();
-        options.Package = isSingleProject
-            ? "StudioLE.Example"
-            : string.Empty;
-        VersioningActivity activity = new(
+        options.Package = string.Empty;
+        GitCli git = new(new GitCliOptions
+        {
+            Directory = options.Directory,
+            SkipValidation = true
+        });
+        RepositoryVersioningActivity activity = new(
             logger,
-            null!,
-            publishedVersionProvider,
+            git,
             repositoryVersionProvider,
             branchVersionProvider,
             headVersionProvider,
-            changedFileProvider,
             releaseTypeStrategy,
             releaseStreamProvider);
 
         // Act
-        SemanticVersion? version = await activity.Execute(options);
+        SemanticVersion? version = activity.Execute(options);
 
         // Assert
-        Assert.That(version.ToString(), Is.EqualTo(expected));
+        Assert.That(version.ToString(), Is.EqualTo("0.1.2"));
     }
 
-    [TestCase(true, "0.1.1")]
-    [TestCase(false, "0.1.2")]
-    public async Task VersioningActivity_Execute_NoProjectChanges_HeadTaggedPreRelease(bool isSingleProject, string expected)
+    [Test]
+    public void VersioningActivity_Execute_NoProjectChanges_HeadTaggedPreRelease()
     {
         // Arrange
-        ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
-        MockPublishedVersionProvider publishedVersionProvider = new(CreateVersions([
-            "0.1.0",
-            "0.1.1"
-        ]));
+        ILogger<RepositoryVersioningActivity> logger = _services.GetRequiredService<ILogger<RepositoryVersioningActivity>>();
         MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
             "0.1.0",
             "0.1.1",
@@ -246,31 +215,31 @@ internal sealed class VersioningActivityTests
         MockHeadVersionProvider headVersionProvider = new(CreateVersions([
             "0.1.2-alpha.1"
         ]));
-        MockChangedFileProvider changedFileProvider = new([]);
         ReleaseStreamProvider releaseStreamProvider = new();
         MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Patch);
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
         options.Branch = "main";
         options.Directory = Path.GetTempPath();
-        options.Package = isSingleProject
-            ? "StudioLE.Example"
-            : string.Empty;
-        VersioningActivity activity = new(
+        options.Package = string.Empty;
+        GitCli git = new(new GitCliOptions
+        {
+            Directory = options.Directory,
+            SkipValidation = true
+        });
+        RepositoryVersioningActivity activity = new(
             logger,
-            null!,
-            publishedVersionProvider,
+            git,
             repositoryVersionProvider,
             branchVersionProvider,
             headVersionProvider,
-            changedFileProvider,
             releaseTypeStrategy,
             releaseStreamProvider);
 
         // Act
-        SemanticVersion? version = await activity.Execute(options);
+        SemanticVersion? version = activity.Execute(options);
 
         // Assert
-        Assert.That(version.ToString(), Is.EqualTo(expected));
+        Assert.That(version.ToString(), Is.EqualTo("0.1.2"));
     }
 
     private static SemanticVersion[] CreateVersions(string[] versions)

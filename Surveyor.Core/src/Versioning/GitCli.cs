@@ -14,29 +14,38 @@ public class GitCli
     /// <summary>
     /// The root directory of the git repository.
     /// </summary>
-    public string RootDirectory { get; }
+    public string RootDirectory { get; private set; }
 
     /// <summary>
     /// DI constructor for <see cref="GitCli"/>.
     /// </summary>
-    public GitCli(IOptions<GitCliOptions> options) : this(options.Value.Directory)
+    public GitCli(IOptions<GitCliOptions> options) : this(options.Value)
     {
     }
 
     /// <summary>
     /// Creates a new instance of <see cref="GitCli"/>.
     /// </summary>
-    /// <remarks>
-    /// <paramref name="directory"/> will be validated to ensure it's part of a git repository.
-    /// </remarks>
-    private GitCli(string directory)
+    public GitCli(GitCliOptions options)
     {
-        if(string.IsNullOrEmpty(directory))
-            directory = Directory.GetCurrentDirectory();
-        RootDirectory = GetRootDirectory(directory);
+        string directory = string.IsNullOrEmpty(options.Directory)
+            ? Directory.GetCurrentDirectory()
+            : options.Directory;
+        RootDirectory = options.SkipValidation
+            ? directory
+            : ValidateRootDirectory(directory);
     }
 
-    private static string GetRootDirectory(string path)
+    /// <summary>
+    /// Set the root directory of the git repository.
+    /// </summary>
+    /// <param name="directory"></param>
+    public void SetRootDirectory(string directory)
+    {
+        RootDirectory = ValidateRootDirectory(directory);
+    }
+
+    private static string ValidateRootDirectory(string path)
     {
         string absolutePath = Path.GetFullPath(path)
             .Replace('\\', '/')

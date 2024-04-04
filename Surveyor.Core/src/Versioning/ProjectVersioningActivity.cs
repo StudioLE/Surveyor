@@ -10,9 +10,9 @@ namespace Surveyor.Versioning;
 /// <para>Analyzing the commit messages to determine the appropriate release type</para>
 /// <para>Incrementing the version based on the release type</para>
 /// </summary>
-public class VersioningActivity
+public class ProjectVersioningActivity
 {
-    private readonly ILogger<VersioningActivity> _logger;
+    private readonly ILogger<ProjectVersioningActivity> _logger;
     private readonly GitCli _git;
     private readonly IPublishedVersionProvider _publishedVersionProvider;
     private readonly IRepositoryVersionProvider _repositoryVersionProvider;
@@ -23,10 +23,10 @@ public class VersioningActivity
     private readonly IReleaseStreamProvider _releaseStreamProvider;
 
     /// <summary>
-    /// DI constructor for <see cref="VersioningActivity"/>.
+    /// DI constructor for <see cref="ProjectVersioningActivity"/>.
     /// </summary>
-    public VersioningActivity(
-        ILogger<VersioningActivity> logger,
+    public ProjectVersioningActivity(
+        ILogger<ProjectVersioningActivity> logger,
         GitCli git,
         IPublishedVersionProvider publishedVersionProvider,
         IRepositoryVersionProvider repositoryVersionProvider,
@@ -53,10 +53,25 @@ public class VersioningActivity
     /// <returns></returns>
     public async Task<SemanticVersion?> Execute(VersioningActivityOptions options)
     {
+        if (string.IsNullOrEmpty(options.Package))
+        {
+            _logger.LogError($"[{options.Package}] The {nameof(options.Package)} option is required.");
+            return null;
+        }
+        if (string.IsNullOrEmpty(options.Directory))
+        {
+            _logger.LogError($"[{options.Package}] The {nameof(options.Directory)} option is required.");
+            return null;
+        }
+        if (!Directory.Exists(options.Directory))
+        {
+            _logger.LogError($"[{options.Package}] The {nameof(options.Directory)} does not exist: {options.Directory}.");
+            return null;
+        }
+        if(_git.RootDirectory != options.Directory)
+            _git.SetRootDirectory(options.Directory);
         if (string.IsNullOrEmpty(options.Branch))
             options.Branch = _git.GetCurrentBranch();
-        if (string.IsNullOrEmpty(options.Directory))
-            options.Directory = _git.RootDirectory;
         ReleaseStream? releaseStreamQuery = _releaseStreamProvider.Get(options.Branch);
         if (releaseStreamQuery is not ReleaseStream releaseStream)
         {
@@ -67,16 +82,6 @@ public class VersioningActivity
             .Get(options.Branch)
             .OrderByDescending(x => x)
             .ToArray();
-        return string.IsNullOrEmpty(options.Package)
-            ? ExecuteForAllProjects(options, releaseStream, branchVersions)
-            : await ExecuteForSingleProject(options, releaseStream, branchVersions);
-    }
-
-    private async Task<SemanticVersion?> ExecuteForSingleProject(
-        VersioningActivityOptions options,
-        ReleaseStream releaseStream,
-        IReadOnlyCollection<SemanticVersion> branchVersions)
-    {
         IReadOnlyCollection<SemanticVersion> publishedVersions = (await _publishedVersionProvider.Get(options.Package))
             .OrderByDescending(x => x)
             .ToArray();
@@ -97,25 +102,6 @@ public class VersioningActivity
         ReleaseType releaseType = publishedVersionsOnBranch.Count == 0
             ? _releaseTypeStrategy.Get()
             : _releaseTypeStrategy.Get(latestPublishedVersionOnBranch!.Value);
-        _logger.LogDebug($"[{options.Package}] Release type: {releaseType}.");
-        IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
-        IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);
-        SemanticVersion version = BumpFullVersion(branchVersions, repositoryVersions, headVersions, releaseType);
-        return !releaseStream.IsPreRelease
-            ? version
-            : BumpPreReleaseVersion(version, repositoryVersions, headVersions, releaseStream);
-    }
-
-    private SemanticVersion? ExecuteForAllProjects(
-        VersioningActivityOptions options,
-        ReleaseStream releaseStream,
-        IReadOnlyCollection<SemanticVersion> branchVersions)
-    {
-        SemanticVersion? latestFullVersionOnBranch = branchVersions.FirstOrNull(x => !x.IsPreRelease());
-        _logger.LogDebug($"[{options.Package}] Last version on branch: {latestFullVersionOnBranch}.");
-        ReleaseType releaseType = branchVersions.Count == 0
-            ? _releaseTypeStrategy.Get()
-            : _releaseTypeStrategy.Get(latestFullVersionOnBranch!.Value);
         _logger.LogDebug($"[{options.Package}] Release type: {releaseType}.");
         IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
         IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);

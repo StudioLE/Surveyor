@@ -15,7 +15,8 @@ public static class ServiceExtensions
     public static IServiceCollection AddSurveyorServices(this IServiceCollection services)
     {
         return services
-            .AddTransient<VersioningActivity>()
+            .AddTransient<ProjectVersioningActivity>()
+            .AddTransient<RepositoryVersioningActivity>()
             .AddTransient<IBranchVersionProvider, BranchVersionProvider>()
             .AddTransient<IChangedFileProvider, ChangedFileProvider>()
             .AddTransient<IPublishedVersionProvider, PublishedVersionProvider>()
@@ -23,7 +24,7 @@ public static class ServiceExtensions
             .AddTransient<IHeadVersionProvider, HeadVersionProvider>()
             .AddTransient<IReleaseTypeStrategy, ReleaseTypeStrategy>()
             .AddTransient<PackageApi>()
-            .AddTransient<GitCli>()
+            .AddSingleton<GitCli>()
             .AddTransient<IReleaseStreamProvider, ReleaseStreamProvider>()
             .AddTransient<ReleaseNotesActivity>()
             .AddTransient<ConventionalCommitTypeProvider>()

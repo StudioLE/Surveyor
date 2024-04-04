@@ -15,4 +15,9 @@ public class GitCliOptions
     /// The root directory of the git repository.
     /// </summary>
     public string Directory { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Should validation of the root directory be skipped?
+    /// </summary>
+    public bool SkipValidation { get; set; } = false;
 }

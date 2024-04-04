@@ -28,18 +28,29 @@ public class Program
         }
         Task task = commands.First() switch
         {
-            "version" => ExecuteVersioning(host.Services),
+            "version" => ExecuteProjectVersioning(host.Services),
+            "project-version" => ExecuteProjectVersioning(host.Services),
             "release-notes" => ExecuteReleaseNotes(host.Services),
             _ => InvalidCommand()
         };
         await task;
     }
 
-    private static async Task ExecuteVersioning(IServiceProvider services)
+    private static async Task ExecuteProjectVersioning(IServiceProvider services)
     {
-        VersioningActivity activity = services.GetRequiredService<VersioningActivity>();
+        ProjectVersioningActivity activity = services.GetRequiredService<ProjectVersioningActivity>();
         IOptions<VersioningActivityOptions> options = services.GetRequiredService<IOptions<VersioningActivityOptions>>();
         SemanticVersion? versionQuery = await activity.Execute(options.Value);
+        if (versionQuery is SemanticVersion version)
+            Console.WriteLine(version.ToString());
+        Environment.Exit(0);
+    }
+
+    private static void ExecuteRepositoryVersioning(IServiceProvider services)
+    {
+        RepositoryVersioningActivity activity = services.GetRequiredService<RepositoryVersioningActivity>();
+        IOptions<VersioningActivityOptions> options = services.GetRequiredService<IOptions<VersioningActivityOptions>>();
+        SemanticVersion? versionQuery = activity.Execute(options.Value);
         if (versionQuery is SemanticVersion version)
             Console.WriteLine(version.ToString());
         Environment.Exit(0);
