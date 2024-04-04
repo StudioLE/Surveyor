@@ -108,10 +108,10 @@ public class VersioningActivity
         ReleaseStream releaseStream,
         IReadOnlyCollection<SemanticVersion> branchVersions)
     {
-        SemanticVersion? latestVersionOnBranch = branchVersions.FirstOrNull();
+        SemanticVersion? latestFullVersionOnBranch = branchVersions.FirstOrNull(x => !x.IsPreRelease());
         ReleaseType releaseType = branchVersions.Count == 0
             ? _releaseTypeStrategy.Get()
-            : _releaseTypeStrategy.Get(latestVersionOnBranch!.Value);
+            : _releaseTypeStrategy.Get(latestFullVersionOnBranch!.Value);
         IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
         IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);
         SemanticVersion version = BumpFullVersion(branchVersions, repositoryVersions, headVersions, releaseType);

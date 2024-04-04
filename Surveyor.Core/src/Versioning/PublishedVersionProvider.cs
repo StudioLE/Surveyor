@@ -35,6 +35,6 @@ public class PublishedVersionProvider : IPublishedVersionProvider
     {
         return string.IsNullOrEmpty(packageName)
             ? Array.Empty<SemanticVersion>()
-            : await _api.GetPackageVersions(packageName, true);
+            : await _api.GetPackageVersions(packageName, false);
     }
 }

@@ -223,6 +223,56 @@ internal sealed class VersioningActivityTests
         Assert.That(version.ToString(), Is.EqualTo(expected));
     }
 
+    [TestCase(true, "0.1.1")]
+    [TestCase(false, "0.1.2")]
+    public async Task VersioningActivity_Execute_NoProjectChanges_HeadTaggedPreRelease(bool isSingleProject, string expected)
+    {
+        // Arrange
+        ILogger<VersioningActivity> logger = _services.GetRequiredService<ILogger<VersioningActivity>>();
+        MockPublishedVersionProvider publishedVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1"
+        ]));
+        MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1",
+            "0.1.2-alpha.1"
+        ]));
+        MockBranchVersionProvider branchVersionProvider = new(CreateVersions([
+            "0.1.0",
+            "0.1.1",
+            "0.1.2-alpha.1"
+        ]));
+        MockHeadVersionProvider headVersionProvider = new(CreateVersions([
+            "0.1.2-alpha.1"
+        ]));
+        MockChangedFileProvider changedFileProvider = new([]);
+        ReleaseStreamProvider releaseStreamProvider = new();
+        MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Patch);
+        VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
+        options.Branch = "main";
+        options.Directory = Path.GetTempPath();
+        options.Package = isSingleProject
+            ? "StudioLE.Example"
+            : string.Empty;
+        VersioningActivity activity = new(
+            logger,
+            null!,
+            publishedVersionProvider,
+            repositoryVersionProvider,
+            branchVersionProvider,
+            headVersionProvider,
+            changedFileProvider,
+            releaseTypeStrategy,
+            releaseStreamProvider);
+
+        // Act
+        SemanticVersion? version = await activity.Execute(options);
+
+        // Assert
+        Assert.That(version.ToString(), Is.EqualTo(expected));
+    }
+
     private static SemanticVersion[] CreateVersions(string[] versions)
     {
         return versions
