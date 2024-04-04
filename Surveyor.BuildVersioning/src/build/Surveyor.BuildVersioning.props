@@ -5,6 +5,7 @@
     <_Surveyor_TaskFolder>$(MSBuildThisFileDirectory)../tasks/netstandard2.0</_Surveyor_TaskFolder>
     <!--Reference to the assembly which contains the MSBuild Task-->
     <SurveyorAssemblyPath>$(_Surveyor_TaskFolder)/$(MSBuildThisFileName).dll</SurveyorAssemblyPath>
+    <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);SurveyorBuildVersioning</GetPackageVersionDependsOn>
   </PropertyGroup>
 
   <UsingTask TaskName="VersioningTask" AssemblyFile="$(SurveyorAssemblyPath)" Condition="Exists('$(SurveyorAssemblyPath)')"/>

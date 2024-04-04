@@ -6,6 +6,8 @@
   <PropertyGroup>
     <Description>This is an example project library.</Description>
     <IsPackable Condition="'$(CI)' == 'true'">false</IsPackable>
+    <TargetFramework/>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +17,7 @@
   <PropertyGroup>
     <SurveyorBranch>alpha</SurveyorBranch>
     <SurveyorAssemblyPath>../../src/bin/$(Configuration)/netstandard2.0/Surveyor.BuildVersioning.dll</SurveyorAssemblyPath>
+    <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);SurveyorBuildVersioning</GetPackageVersionDependsOn>
   </PropertyGroup>
 
   <UsingTask TaskName="VersioningTask" AssemblyFile="$(SurveyorAssemblyPath)" Condition="Exists('$(SurveyorAssemblyPath)')"/>

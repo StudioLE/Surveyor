@@ -6,23 +6,39 @@
     <SurveyorDirectory Condition="'$(SurveyorDirectory)' == ''">$(MSBuildProjectDirectory)</SurveyorDirectory>
   </PropertyGroup>
 
-  <Target Name="BuildVersioning" BeforeTargets="BeforeBuild;GenerateNuspec" Condition="Exists('$(SurveyorAssemblyPath)')">
+  <Target Name="SurveyorBuildVersioning" BeforeTargets="BeforeBuild;GenerateNuspec" Condition="Exists('$(SurveyorAssemblyPath)')">
     <VersioningTask
       Package="$(SurveyorPackage)"
       Directory="$(SurveyorDirectory)"
       Branch="$(SurveyorBranch)"
       Feed="$(SurveyorFeed)"
       Token="$(SurveyorToken)">
-      <Output TaskParameter="VersionPrefix" PropertyName="VersionPrefix"/>
-      <Output TaskParameter="VersionSuffix" PropertyName="VersionSuffix"/>
-      <Output TaskParameter="Version" PropertyName="PackageVersion"/>
+      <Output TaskParameter="VersionPrefix" PropertyName="SurveyorVersionPrefix"/>
+      <Output TaskParameter="VersionSuffix" PropertyName="SurveyorVersionSuffix"/>
+      <Output TaskParameter="Version" PropertyName="SurveyorVersion"/>
     </VersioningTask>
-    <Message Text="VersionPrefix: $(VersionPrefix)" Importance="high"/>
-    <Message Text="VersionSuffix: $(VersionSuffix)" Importance="high"/>
-    <Message Text="PackageVersion: $(PackageVersion)" Importance="high"/>
+    <PropertyGroup>
+      <VersionPrefix>$(SurveyorVersionPrefix)</VersionPrefix>
+      <VersionSuffix>$(SurveyorVersionSuffix)</VersionSuffix>
+      <Version>$(SurveyorVersionPrefix)</Version>
+      <AssemblyVersion>$(SurveyorVersionPrefix)</AssemblyVersion>
+      <FileVersion>$(SurveyorVersionPrefix)</FileVersion>
+      <InformationalVersion>$(SurveyorVersion)</InformationalVersion>
+      <PackageVersion>$(SurveyorVersion)</PackageVersion>
+    </PropertyGroup>
+    <Message Text="Surveyor: $(AssemblyName) $(PackageVersion)" Importance="high" />
+    <Message Text="AssemblyName: $(AssemblyName)" Importance="normal" />
+    <Message Text="Version: $(Version)" Importance="normal"/>
+    <Message Text="PackageVersion: $(PackageVersion)" Importance="normal"/>
+    <Message Text="AssemblyVersion: $(AssemblyVersion)" Importance="normal"/>
+    <Message Text="FileVersion: $(FileVersion)" Importance="normal"/>
+    <Message Text="InformationalVersion: $(InformationalVersion)" Importance="normal"/>
+    <Message Text="VersionPrefix: $(VersionPrefix)" Importance="normal"/>
+    <Message Text="VersionSuffix: $(VersionSuffix)" Importance="normal"/>
+    <Message Text="PackageVersion: $(PackageVersion)" Importance="normal"/>
   </Target>
 
-  <Target Name="NoVersioning" BeforeTargets="BeforeBuild;GenerateNuspec" Condition=" ! Exists('$(SurveyorAssemblyPath)')">
+  <Target Name="SurveyorNoVersioning" BeforeTargets="BeforeBuild;GenerateNuspec" Condition=" ! Exists('$(SurveyorAssemblyPath)')">
     <Warning Text="Surveyor assembly not found: $(SurveyorAssemblyPath)"/>
     <Warning Text="Versioning has failed but build will continue."/>
   </Target>
