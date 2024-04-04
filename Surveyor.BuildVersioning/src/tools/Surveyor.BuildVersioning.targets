@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup>
-    <SurveyorPackage Condition="'$(SurveyorPackage)' == ''">$(AssemblyName)</SurveyorPackage>
-    <SurveyorDirectory Condition="'$(SurveyorDirectory)' == ''">$(MSBuildProjectDirectory)</SurveyorDirectory>
-  </PropertyGroup>
-
   <Target Name="SurveyorBuildVersioning" BeforeTargets="BeforeBuild;GenerateNuspec" Condition="Exists('$(SurveyorAssemblyPath)')">
+    <PropertyGroup>
+      <SurveyorPackage Condition="'$(SurveyorPackage)' == ''">$(AssemblyName)</SurveyorPackage>
+      <SurveyorDirectory Condition="'$(SurveyorDirectory)' == ''">$(MSBuildProjectDirectory)</SurveyorDirectory>
+    </PropertyGroup>
+
     <VersioningTask
       Package="$(SurveyorPackage)"
       Directory="$(SurveyorDirectory)"
@@ -17,6 +17,7 @@
       <Output TaskParameter="VersionSuffix" PropertyName="SurveyorVersionSuffix"/>
       <Output TaskParameter="Version" PropertyName="SurveyorVersion"/>
     </VersioningTask>
+
     <PropertyGroup>
       <VersionPrefix>$(SurveyorVersionPrefix)</VersionPrefix>
       <VersionSuffix>$(SurveyorVersionSuffix)</VersionSuffix>
@@ -26,6 +27,7 @@
       <InformationalVersion>$(SurveyorVersion)</InformationalVersion>
       <PackageVersion>$(SurveyorVersion)</PackageVersion>
     </PropertyGroup>
+
     <Message Text="Surveyor: $(AssemblyName) $(PackageVersion)" Importance="high" />
     <Message Text="AssemblyName: $(AssemblyName)" Importance="normal" />
     <Message Text="Version: $(Version)" Importance="normal"/>
