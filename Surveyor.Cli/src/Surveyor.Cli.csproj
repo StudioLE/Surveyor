@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>Surveyor</AssemblyName>
-    <Description>This is an example project executable.</Description>
+    <Description>A CLI tool to handle essential CI/CD tasks such as: version numbering for a repository or a specific .NET assembly, project, or package; and generating release notes since the last release.</Description>
   </PropertyGroup>
 
   <!-- Use consistent properties across all projects -->

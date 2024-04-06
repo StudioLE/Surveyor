@@ -4,11 +4,7 @@
     <Authors>StudioLE</Authors>
     <Copyright>Copyright © Laurence Elsdon 2024</Copyright>
     <PackageProjectUrl>https://github.com/StudioLE/Surveyor</PackageProjectUrl>
-    <PackageTags>git build versioning automatic semver semantic version</PackageTags>
-    <RepositoryReadmeFilePath>../../README.md</RepositoryReadmeFilePath>
-    <ProjectReadmeFilePath>README.md</ProjectReadmeFilePath>
-    <ReadmeFilePath Condition="Exists('$(RepositoryReadmeFilePath)')">$(RepositoryReadmeFilePath)</ReadmeFilePath>
-    <ReadmeFilePath Condition="Exists('$(ProjectReadmeFilePath)')">$(ProjectReadmeFilePath)</ReadmeFilePath>
+    <PackageTags>git build versioning automatic semver semantic version release notes</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,9 +13,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Condition="'$(ReadmeFilePath)' != ''" Include="$(ReadmeFilePath)" Pack="true" PackagePath="\" Visible="false"/>
-  </ItemGroup>
+  <PropertyGroup>
+    <RepositoryReadmeFilePath>../../README.md</RepositoryReadmeFilePath>
+    <ProjectReadmeFilePath>README.md</ProjectReadmeFilePath>
+    <PackageReadmeFile Condition="Exists('$(RepositoryReadmeFilePath)')">$(RepositoryReadmeFilePath)</PackageReadmeFile>
+    <PackageReadmeFile Condition="Exists('$(ProjectReadmeFilePath)')">$(ProjectReadmeFilePath)</PackageReadmeFile>
+  </PropertyGroup>
 
   <PropertyGroup>
     <IsExecutable>false</IsExecutable>
@@ -47,6 +46,11 @@
 
   <ItemGroup Condition="$(IsLibrary)">
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsLibrary) OR $(IsExecutable)">
+    <Content Condition="'$(PackageReadmeFile)' == '$(ProjectReadmeFilePath)'" Include="$(PackageReadmeFile)" Pack="true" PackagePath="/" />
+    <None Condition="'$(PackageReadmeFile)' == '$(RepositoryReadmeFilePath)'" Include="$(PackageReadmeFile)" Pack="true" PackagePath="/" Visible="false" />
   </ItemGroup>
 
 </Project>
