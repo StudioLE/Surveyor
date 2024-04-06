@@ -11,11 +11,12 @@ namespace Surveyor.Cli;
 
 public class Program
 {
-
     public static async Task Main(string[] args)
     {
         IHost host = Host.CreateDefaultBuilder(args)
-            .ConfigureLogging(logging => logging.ClearProviders())
+            .ConfigureLogging(logging => logging
+                .AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Debug)
+                .SetMinimumLevel(LogLevel.Debug))
             .ConfigureServices((_, services) => services
                 .AddSurveyorServices()
                 .AddSurveyorOptions())
