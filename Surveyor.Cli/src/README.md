@@ -6,22 +6,16 @@ A CLI tool to handle essential CI/CD tasks such as:
 
 Determine assembly and package version numbers by analyzing conventional commit messages and determining whether files have changed since the last version published to a NuGet feed.
 
-Each project, assembly, or package in a solution is versioned independently so new versions are only released if the assembly has changed, as opposed to publishing every package in the repository.
-
-### Generating Release Notes
-
-Generate release notes by analyzing conventional commit messages and grouping them by type (breaking changes, features, fixes, etc.).
-
-
-## Key Features
-
-- Each project, assembly, or package in a solution is versioned independently so new versions are only released if the assembly has actually changed, as opposed to
+- Each project, assembly, or package in a solution is versioned independently so new versions are only released if the assembly has changed, as opposed to publishing every package in the repository.
 - Analyses commit messages formatted according to the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification to determine whether a version bump should be a patch, minor, or major release.
 - Version numbers follow the [Semantic Versioning 2](https://semver.org/spec/v2.0.0.html) specification.
 - Version numbers are recorded as git tags ensuring full compatibility with your existing workflow.
 - Per branch versioning gives the flexibility to simultaneously develop `v2.0.0` while providing patches for your `v1` branch.
 - Pre-release versioning is fully supported via `alpha`, `beta`, and `rc` branches.
 
+### Generating Release Notes
+
+Generate release notes by analyzing conventional commit messages and grouping them by type (breaking changes, features, fixes, etc.).
 
 ## How to Use
 
