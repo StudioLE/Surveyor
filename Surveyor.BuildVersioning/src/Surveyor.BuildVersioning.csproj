@@ -4,7 +4,7 @@
   <Import Project="../../Global.props"/>
 
   <PropertyGroup>
-    <Description>This is an example project library.</Description>
+    <Description>An MSBuild task to automatically apply assembly and package version numbers by analyzing conventional commit messages and whether files have changed since the last published version.</Description>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
