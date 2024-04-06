@@ -4,7 +4,9 @@
     <Authors>StudioLE</Authors>
     <Copyright>Copyright © Laurence Elsdon 2024</Copyright>
     <PackageProjectUrl>https://github.com/StudioLE/Surveyor</PackageProjectUrl>
-    <PackageTags>git build versioning automatic semver semantic version release notes</PackageTags>
+    <PackageTags>git build versioning automatic semver semantic version release notes conventional commit</PackageTags>
+    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <PropertyGroup>
