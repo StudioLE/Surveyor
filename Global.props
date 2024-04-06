@@ -18,8 +18,7 @@
   <PropertyGroup>
     <RepositoryReadmeFilePath>../../README.md</RepositoryReadmeFilePath>
     <ProjectReadmeFilePath>README.md</ProjectReadmeFilePath>
-    <PackageReadmeFile Condition="Exists('$(RepositoryReadmeFilePath)')">$(RepositoryReadmeFilePath)</PackageReadmeFile>
-    <PackageReadmeFile Condition="Exists('$(ProjectReadmeFilePath)')">$(ProjectReadmeFilePath)</PackageReadmeFile>
+    <PackageReadMeFile Condition="Exists('$(RepositoryReadmeFilePath)') OR Exists('$(ProjectReadmeFilePath)')">README.md</PackageReadMeFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -51,8 +50,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(IsLibrary) OR $(IsExecutable)">
-    <Content Condition="'$(PackageReadmeFile)' == '$(ProjectReadmeFilePath)'" Include="$(RepositoryReadmeFilePath)" Pack="true" PackagePath="/" />
-    <None Condition="'$(PackageReadmeFile)' == '$(RepositoryReadmeFilePath)'" Include="$(PackageReadmeFile)" Pack="true" PackagePath="/" Visible="false" />
+    <Content Condition="Exists('$(ProjectReadmeFilePath)')" Include="$(PackageReadmeFile)" Pack="true" PackagePath="/" />
+    <None Condition="Exists('$(RepositoryReadmeFilePath)') AND ! Exists('$(ProjectReadmeFilePath)')" Include="$(RepositoryReadmeFilePath)" Pack="true" PackagePath="/" Visible="false" />
   </ItemGroup>
 
 </Project>
