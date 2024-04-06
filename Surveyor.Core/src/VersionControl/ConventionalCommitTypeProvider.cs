@@ -1,6 +1,7 @@
 using Surveyor.System;
+using Surveyor.Versioning;
 
-namespace Surveyor.Versioning;
+namespace Surveyor.VersionControl;
 
 /// <summary>
 /// A provider for <see cref="ConventionalCommitType"/>

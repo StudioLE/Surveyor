@@ -1,4 +1,4 @@
-namespace Surveyor.Versioning;
+namespace Surveyor.ReleaseNotes;
 
 /// <summary>
 /// Options for <see cref="ReleaseNotesActivity"/>.

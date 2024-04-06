@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using Surveyor.Utils.CommandLine;
 
-namespace Surveyor.Versioning;
+namespace Surveyor.VersionControl;
 
 /// <summary>
 /// Methods to help with Git operations.

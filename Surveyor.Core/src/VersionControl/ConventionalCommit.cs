@@ -1,4 +1,6 @@
-namespace Surveyor.Versioning;
+using Surveyor.Versioning;
+
+namespace Surveyor.VersionControl;
 
 /// <summary>
 /// A conventional commit.

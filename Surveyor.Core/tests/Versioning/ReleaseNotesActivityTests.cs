@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 using Surveyor.Hosting;
-using Surveyor.Versioning;
+using Surveyor.ReleaseNotes;
 
 namespace Surveyor.Core.Tests.Versioning;
 

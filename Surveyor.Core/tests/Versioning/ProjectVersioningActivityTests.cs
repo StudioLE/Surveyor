@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using Surveyor.Core.Tests.Resources;
 using Surveyor.Hosting;
+using Surveyor.VersionControl;
 using Surveyor.Versioning;
 
 namespace Surveyor.Core.Tests.Versioning;

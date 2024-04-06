@@ -1,5 +1,5 @@
 using StudioLE.Extensions.System;
-using Surveyor.Versioning;
+using Surveyor.VersionControl;
 
 namespace Surveyor.Core.Tests.Resources;
 

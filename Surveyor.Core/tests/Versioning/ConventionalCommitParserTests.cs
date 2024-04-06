@@ -2,7 +2,7 @@ using NUnit.Framework;
 using StudioLE.Diagnostics;
 using StudioLE.Diagnostics.NUnit;
 using StudioLE.Verify.Yaml;
-using Surveyor.Versioning;
+using Surveyor.VersionControl;
 
 namespace Surveyor.Core.Tests.Versioning;
 

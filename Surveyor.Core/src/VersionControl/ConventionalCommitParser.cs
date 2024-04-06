@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
+using Surveyor.Versioning;
 
-namespace Surveyor.Versioning;
+namespace Surveyor.VersionControl;
 
 /// <summary>
 /// Parse git commit messages according to the Conventional Commits specification.

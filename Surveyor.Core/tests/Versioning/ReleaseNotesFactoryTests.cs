@@ -3,7 +3,8 @@ using StudioLE.Diagnostics;
 using StudioLE.Diagnostics.NUnit;
 using StudioLE.Verify;
 using Surveyor.Core.Tests.Resources;
-using Surveyor.Versioning;
+using Surveyor.ReleaseNotes;
+using Surveyor.VersionControl;
 
 namespace Surveyor.Core.Tests.Versioning;
 

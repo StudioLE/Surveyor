@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Surveyor.Hosting;
+using Surveyor.ReleaseNotes;
 using Surveyor.Versioning;
 
 namespace Surveyor.Cli;

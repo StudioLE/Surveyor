@@ -1,6 +1,8 @@
 using Surveyor.System;
+using Surveyor.VersionControl;
+using Surveyor.Versioning;
 
-namespace Surveyor.Versioning;
+namespace Surveyor.ReleaseNotes;
 
 /// <summary>
 /// Create release notes for all commits on the branch since the last release.

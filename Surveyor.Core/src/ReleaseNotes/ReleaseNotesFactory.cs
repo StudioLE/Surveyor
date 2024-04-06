@@ -1,7 +1,8 @@
 using StudioLE.Extensions.System;
 using StudioLE.Patterns;
+using Surveyor.VersionControl;
 
-namespace Surveyor.Versioning;
+namespace Surveyor.ReleaseNotes;
 
 /// <summary>
 /// Create release notes from a collection of conventional commits.

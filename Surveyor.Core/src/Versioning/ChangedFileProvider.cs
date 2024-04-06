@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Surveyor.VersionControl;
 
 namespace Surveyor.Versioning;
 

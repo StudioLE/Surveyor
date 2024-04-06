@@ -1,3 +1,5 @@
+using Surveyor.VersionControl;
+
 namespace Surveyor.Versioning;
 
 /// <summary>

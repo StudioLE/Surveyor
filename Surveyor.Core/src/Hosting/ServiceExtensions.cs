@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Surveyor.Packages;
+using Surveyor.ReleaseNotes;
+using Surveyor.VersionControl;
 using Surveyor.Versioning;
 
 namespace Surveyor.Hosting;

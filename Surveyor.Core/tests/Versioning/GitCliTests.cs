@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
-using Surveyor.Versioning;
+using Surveyor.VersionControl;
 
 namespace Surveyor.Core.Tests.Versioning;
 

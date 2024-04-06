@@ -1,4 +1,4 @@
-namespace Surveyor.Versioning;
+namespace Surveyor.VersionControl;
 
 /// <summary>
 /// Options for <see cref="GitCli"/>.
