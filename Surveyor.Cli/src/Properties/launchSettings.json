@@ -20,6 +20,13 @@
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
       }
+    },
+    "ReadMeActivity": {
+      "commandName": "Project",
+      "commandLineArgs": "readme",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production"
+      }
     }
   }
 }

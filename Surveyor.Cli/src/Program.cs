@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Surveyor.Hosting;
+using Surveyor.Projects;
 using Surveyor.ReleaseNotes;
 using Surveyor.Versioning;
 
@@ -32,6 +33,7 @@ public class Program
             "version" => ExecuteRepositoryVersioning(host.Services),
             "project-version" => ExecuteProjectVersioning(host.Services),
             "release-notes" => ExecuteReleaseNotes(host.Services),
+            "readme" => ExecuteReadMe(host.Services),
             _ => InvalidCommand()
         };
         await task;
@@ -71,6 +73,23 @@ public class Program
         else
         {
             Console.Error.WriteLine("Failed to produce release notes.");
+            Environment.Exit(1);
+        }
+        return Task.CompletedTask;
+    }
+
+    private static Task ExecuteReadMe(IServiceProvider services)
+    {
+        ReadMeActivity activity = services.GetRequiredService<ReadMeActivity>();
+        string readme = activity.Execute();
+        if (!string.IsNullOrEmpty(readme))
+        {
+            Console.WriteLine(readme);
+            Environment.Exit(0);
+        }
+        else
+        {
+            Console.Error.WriteLine("Failed to produce README.");
             Environment.Exit(1);
         }
         return Task.CompletedTask;

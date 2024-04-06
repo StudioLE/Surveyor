@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Surveyor.Packages;
+using Surveyor.Projects;
 using Surveyor.ReleaseNotes;
 using Surveyor.VersionControl;
 using Surveyor.Versioning;
@@ -30,7 +31,8 @@ public static class ServiceExtensions
             .AddTransient<IReleaseStreamProvider, ReleaseStreamProvider>()
             .AddTransient<ReleaseNotesActivity>()
             .AddTransient<ConventionalCommitTypeProvider>()
-            .AddTransient<IReleaseNotesFactory, ReleaseNotesByScopeFactory>();
+            .AddTransient<IReleaseNotesFactory, ReleaseNotesByScopeFactory>()
+            .AddTransient<ReadMeActivity>();
     }
 
     /// <summary>

@@ -127,7 +127,7 @@ public class GitCli
         if (!ValidateGitReferenceArgument(sinceRef))
             throw new("Invalid git reference.");
         IReadOnlyCollection<string> changedDirectories = GetDirectoriesWithChangesSince(sinceRef);
-        IReadOnlyCollection<string> projects = GetProjectFilePaths();
+        IReadOnlyCollection<string> projects = GetAllProjectFilePaths();
         return projects
             .Where(project =>
             {
@@ -264,7 +264,13 @@ public class GitCli
         return CliExecuteOrThrow($"rev-list \"{sinceRef}\"..");
     }
 
-    private IReadOnlyCollection<string> GetProjectFilePaths()
+    /// <summary>
+    /// Get the paths of each <c>.csproj</c> in the repository.
+    /// </summary>
+    /// <returns>
+    /// A collection of paths to <c>.csproj</c> files relative to the root of the repository.
+    /// </returns>
+    public IReadOnlyCollection<string> GetAllProjectFilePaths()
     {
         return EnumerateFilesRecursive(RootDirectory, "*.csproj")
             .Select(path =>
