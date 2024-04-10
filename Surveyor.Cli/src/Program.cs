@@ -24,7 +24,7 @@ public class Program
         string[] commands = args
             .TakeWhile(x => !x.StartsWith('-'))
             .ToArray();
-        if(commands.Length == 0)
+        if (commands.Length == 0)
         {
             Console.Error.WriteLine("No command specified.");
             Environment.Exit(1);
