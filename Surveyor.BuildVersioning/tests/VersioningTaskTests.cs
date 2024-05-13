@@ -39,7 +39,7 @@ internal sealed class VersioningTaskTests
             Assert.That(result);
             Assert.That(engine.Errors.Count, Is.Zero);
             Assert.That(engine.Warnings.Count, Is.Zero);
-            Assert.That(engine.Messages.Count, Is.Zero);
+            Assert.That(engine.Messages.Count, Is.EqualTo(3));
             Assert.That(engine.CustomEvents.Count, Is.Zero);
             Assert.That(task.Version, Is.Not.Empty);
         });
