@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.9.5" PrivateAssets="all" ExcludeAssets="Runtime"/>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="StudioLE.Extensions.Logging.Cache" Version="0.10.0" />
+    <PackageReference Include="StudioLE.Extensions.Logging.Cache" Version="0.11.0" />
   </ItemGroup>
 
   <!-- Bundle dependencies into the package -->
