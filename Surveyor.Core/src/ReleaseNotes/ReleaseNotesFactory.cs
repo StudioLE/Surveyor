@@ -66,12 +66,12 @@ public class ReleaseNotesFactory : IReleaseNotesFactory
 
     private string CreatePerTypeSections(ConventionalCommitType? type, IReadOnlyCollection<ConventionalCommit> commits)
     {
-        string typeFriendlyName = type?.Name ?? "Other Improvements";
+        string typeFriendlyName = type?.Name ?? "Other";
         string body = commits
             .Select(Create)
             .Join();
         return $"""
-                ### {typeFriendlyName}
+                #### {typeFriendlyName}
 
                 {body}
                 """;

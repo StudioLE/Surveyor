@@ -56,7 +56,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "major",
-                Name = "Major Improvements",
+                Name = "Major",
                 Description = "A major release",
                 Release = ReleaseType.Major,
                 Priority = 15
@@ -64,7 +64,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "breaking",
-                Name = "Breaking Changes",
+                Name = "Breaking",
                 Description = "A breaking change",
                 Release = ReleaseType.Major,
                 Priority = 14
@@ -72,7 +72,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "minor",
-                Name = "Minor Improvements",
+                Name = "Minor",
                 Description = "A minor release",
                 Release = ReleaseType.Minor,
                 Priority = 13
@@ -89,7 +89,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "patch",
-                Name = "Patch Improvements",
+                Name = "Patch",
                 Description = "A patch release",
                 Release = ReleaseType.Patch,
                 Priority = 11
@@ -106,7 +106,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "perf",
-                Name = "Performance Improvements",
+                Name = "Performance",
                 Description = "A code change that improves performance",
                 Release = ReleaseType.Patch,
                 Priority = 9
@@ -114,7 +114,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "build",
-                Name = "Build Improvements",
+                Name = "Build",
                 Description = "Changes that affect the build system",
                 Release = ReleaseType.Patch,
                 Priority = 8
@@ -122,7 +122,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "deps",
-                Name = "Dependency Improvements",
+                Name = "Dependencies",
                 Description = "Changes to dependencies",
                 Release = ReleaseType.Patch,
                 Priority = 7
@@ -130,7 +130,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "docs",
-                Name = "Documentation Improvements",
+                Name = "Documentation",
                 Description = "Changes affecting the documentation, including xml-doc",
                 Release = ReleaseType.Patch,
                 Priority = 6
@@ -138,7 +138,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "revert",
-                Name = "Reversions",
+                Name = "Revert",
                 Description = "Reverting of previous changes",
                 Release = ReleaseType.Patch,
                 Priority = 5
@@ -147,7 +147,7 @@ public class ConventionalCommitTypeProvider
             {
                 Id = "style",
                 AlternativeIds = ["styles"],
-                Name = "Style Improvements",
+                Name = "Code Style",
                 Description = "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)",
                 Release = ReleaseType.None,
                 Priority = 4
@@ -155,7 +155,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "refactor",
-                Name = "Refactors",
+                Name = "Refactor",
                 Description = "A code change that neither fixes a bug nor adds a feature",
                 Release = ReleaseType.None,
                 Priority = 3
@@ -163,7 +163,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "test",
-                Name = "Test Improvements",
+                Name = "Tests",
                 Description = "Adding, removing or revising tests",
                 Release = ReleaseType.None,
                 Priority = 2
@@ -171,7 +171,7 @@ public class ConventionalCommitTypeProvider
             new()
             {
                 Id = "ci",
-                Name = "Continuous Integration Improvements",
+                Name = "CI",
                 Description = "Changes to the CI pipeline",
                 Release = ReleaseType.None,
                 Priority = 1
