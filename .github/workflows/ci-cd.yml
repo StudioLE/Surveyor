@@ -7,153 +7,44 @@ jobs:
 
   test-ubuntu:
     name: Ubuntu
-    uses: StudioLE/Actions/.github/workflows/dotnet-test.yml@v5
+    uses: StudioLE/Actions/.github/workflows/01-test.yml@v3
     with:
       project: ""
       os: ubuntu-latest
-      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      nuget_username: ${{ github.repository_owner }}
-      pack: true
-    secrets:
-      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
+    secrets: inherit
 
   test-windows:
     name: Windows
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/dotnet-test.yml@v5
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/01-test.yml@v3
     with:
       project: ""
       os: windows-latest
-      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      nuget_username: ${{ github.repository_owner }}
-    secrets:
-      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
-
-  publish-cli-linux:
-    name: Linux CLI
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v5
-    with:
-      project: Surveyor.Cli/src/Surveyor.Cli.csproj
-      runtime: linux-x64
-      npm: ""
-      workload: ""
-      artifact: Cli-Linux
-      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      nuget_username: ${{ github.repository_owner }}
-    secrets:
-      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
-
-  publish-cli-windows:
-    name: Windows CLI
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v5
-    with:
-      project: Surveyor.Cli/src/Surveyor.Cli.csproj
-      runtime: win-x64
-      npm: ""
-      workload: ""
-      artifact: Cli-Windows
-      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      nuget_username: ${{ github.repository_owner }}
-    secrets:
-      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
-
-  documentation:
-    name: Documentation
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/illuminate-generate.yml@v5
-    with:
-      project: ""
-      os: ubuntu-latest
-      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      nuget_username: ${{ github.repository_owner }}
-      latest: ${{ github.ref_type == 'branch' && contains(fromJSON('["main"]'), github.ref_name) }}
-      source: "*/src/bin/Release/*/Surveyor.*.dll"
-      section: "example"
-    secrets:
-      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
+    secrets: inherit
 
   release:
     name: Release
     if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta"]'), github.ref_name) }}
     needs:
     - test-ubuntu
-    uses: StudioLE/Actions/.github/workflows/surveyor-release.yml@v5
-    with:
-      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      nuget_username: ${{ github.repository_owner }}
-    secrets:
-      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
+    uses: StudioLE/Actions/.github/workflows/02-release.yml@v3
+    secrets: inherit
 
-  push-tests:
-    name: Test Results
-    if: ${{ always() }}
-    needs:
-    - test-ubuntu
-    uses: StudioLE/Actions/.github/workflows/push-to-repo.yml@v5
-    with:
-      repo: StudioLE/Tests
-      artifact: Tests-Linux-X64
-      rm: "${{ github.repository }}/${{ github.run_id }}"
-      path: "${{ github.repository }}/${{ github.run_id }}"
-      message: "feat(${{ github.repository }}): Added test results for ${{ github.sha }}"
-    secrets:
-      repo_token: ${{ secrets.TESTS_TOKEN }}
-
-  push-packages:
-    name: Packages
+  push:
+    name: Push
     needs:
     - release
-    uses: StudioLE/Actions/.github/workflows/push-to-nuget.yml@v5
+    uses: StudioLE/Actions/.github/workflows/03-push.yml@v3
     with:
-      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      nuget_username: ${{ github.repository_owner }}
-    secrets:
-      nuget_password: ${{ secrets.GITHUB_TOKEN }}
-
-  push-cli-linux:
-    name: Linux Cli
-    needs:
-    - publish-cli-linux
-    - release
-    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v5
-    with:
-      artifact: Cli-Linux
-      name: Surveyor.Cli-${{ needs.release.outputs.version }}-Linux-x64
+      project: ""
       version: ${{ needs.release.outputs.version }}
-
-  push-cli-windows:
-    name: Windows Cli
-    needs:
-    - test-windows
-    - publish-cli-windows
-    - release
-    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v5
-    with:
-      artifact: Cli-Windows
-      name: Surveyor.Cli-${{ needs.release.outputs.version }}-Windows-x64
-      version: ${{ needs.release.outputs.version }}
-
-  push-documentation:
-    name: Documentation
-    needs:
-    - documentation
-    - release
-    uses: StudioLE/Actions/.github/workflows/push-to-repo.yml@v5
-    with:
-      repo: StudioLE/Documentation
-      artifact: Documentation
-      path: ""
-      message: "feat(surveyor): Added documentation for v${{ needs.release.outputs.version }}"
-    secrets:
-      repo_token: ${{ secrets.DOCUMENTATION_TOKEN }}
+    secrets: inherit
 
   environment:
     name: Environment
-    if: ${{ needs.release.outputs.environment != '' }}
     needs:
     - release
+    - push
     runs-on: ubuntu-latest
     environment: ${{ needs.release.outputs.environment }}
     steps:
