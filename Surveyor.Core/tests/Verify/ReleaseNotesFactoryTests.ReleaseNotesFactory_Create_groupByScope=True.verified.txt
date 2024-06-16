@@ -16,21 +16,11 @@
 
 ### Documentation Improvements
 
-> <details>
-> <summary><strong>correct spelling of CHANGELOG</strong> 6a6a6a6a</summary>
-> <br>
-> 
-> No further information provided...
-> </details>
+> <strong>correct spelling of CHANGELOG</strong> 6a6a6a6a
 
 ### Chores
 
-> <details>
-> <summary><strong>Updated dependencies</strong> 4a4a4a4a</summary>
-> <br>
-> 
-> No further information provided...
-> </details>
+> <strong>Updated dependencies</strong> 4a4a4a4a
 
 > <details>
 > <summary><strong>Updated dependencies</strong> 5a5a5a5a</summary>
@@ -64,12 +54,7 @@
 
 ### New Features
 
-> <details>
-> <summary><strong>Added a new features to the CLI</strong> 0a0a0a0a</summary>
-> <br>
-> 
-> No further information provided...
-> </details>
+> <strong>Added a new features to the CLI</strong> 0a0a0a0a
 
 ### Bug Fixes
 

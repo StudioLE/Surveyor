@@ -85,14 +85,15 @@ public class ReleaseNotesFactory : IReleaseNotesFactory
         string summary = commit.IsBreaking
             ? $"Breaking Change: {scope}<strong>{commit.Subject}</strong>  {commit.Hash}"
             : $"{scope}<strong>{commit.Subject}</strong> {commit.Hash}";
-        string details = string.IsNullOrWhiteSpace(commit.Body) && commit.Footers.Count == 0
-            ? "No further information provided..."
+        string? details = string.IsNullOrWhiteSpace(commit.Body) && commit.Footers.Count == 0
+            ? null
             : $"""
                {commit.Body.Trim()}
 
                {FormatAsYaml(commit.Footers)}
                """;
         string alert = commit.IsBreaking ? "[!WARNING]" : string.Empty;
+
         string result = $"""
                          {alert}
                          {FormatAsCollapsable(summary, details)}
@@ -122,15 +123,17 @@ public class ReleaseNotesFactory : IReleaseNotesFactory
             .Join();
     }
 
-    private static string FormatAsCollapsable(string summary, string details)
+    private static string FormatAsCollapsable(string summary, string? details)
     {
-        return $"""
-                <details>
-                <summary>{summary}</summary>
-                <br>
+        return string.IsNullOrEmpty(details)
+            ? summary
+            : $"""
+               <details>
+               <summary>{summary}</summary>
+               <br>
 
-                {details.Trim()}
-                </details>
-                """;
+               {details!.Trim()}
+               </details>
+               """;
     }
 }
