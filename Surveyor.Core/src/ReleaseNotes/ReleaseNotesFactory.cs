@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using StudioLE.Extensions.System;
 using StudioLE.Patterns;
 using Surveyor.VersionControl;
@@ -14,15 +15,17 @@ public interface IReleaseNotesFactory : IFactory<IReadOnlyCollection<Conventiona
 /// <summary>
 /// Create release notes from a collection of conventional commits.
 /// </summary>
-public class ReleaseNotesByScopeFactory : IReleaseNotesFactory
+public class ReleaseNotesFactory : IReleaseNotesFactory
 {
+    private readonly ReleaseNotesActivityOptions _options;
     private readonly ConventionalCommitTypeProvider _types;
 
     /// <summary>
-    /// Creates a new instance of <see cref="ReleaseNotesByScopeFactory"/>.
+    /// Creates a new instance of <see cref="ReleaseNotesFactory"/>.
     /// </summary>
-    public ReleaseNotesByScopeFactory(ConventionalCommitTypeProvider types)
+    public ReleaseNotesFactory(IOptions<ReleaseNotesActivityOptions> options, ConventionalCommitTypeProvider types)
     {
+        _options = options.Value;
         _types = types;
     }
 
@@ -36,7 +39,8 @@ public class ReleaseNotesByScopeFactory : IReleaseNotesFactory
     public string Create(IReadOnlyCollection<ConventionalCommit> commits)
     {
         string[] sections = commits
-            .GroupBy(x => x.Scope)
+            .GroupBy(x => _options.GroupByScope ? x.Scope : string.Empty)
+            .OrderBy(x => x.Key)
             .Select(x => CreatePerScopeSections(x.Key, x.ToArray()))
             .ToArray();
         return string.Join(Environment.NewLine, sections);
@@ -45,14 +49,16 @@ public class ReleaseNotesByScopeFactory : IReleaseNotesFactory
     private string CreatePerScopeSections(string scope, IReadOnlyCollection<ConventionalCommit> commits)
     {
         if (string.IsNullOrEmpty(scope))
-            scope = "Global Improvements";
+            scope = string.IsNullOrEmpty(_options.DefaultSectionTitle)
+                ? "Changes"
+                : _options.DefaultSectionTitle;
         string body = commits
             .GroupBy(x => _types.Get(x.TypeId))
             .OrderByDescending(x => x.Key?.Priority ?? -1)
             .Select(x => CreatePerTypeSections(x.Key, x.ToArray()))
             .Join();
         return $"""
-                # {scope}
+                ## {scope}
 
                 {body}
                 """;
@@ -71,11 +77,14 @@ public class ReleaseNotesByScopeFactory : IReleaseNotesFactory
                 """;
     }
 
-    private static string Create(ConventionalCommit commit)
+    private string Create(ConventionalCommit commit)
     {
+        string scope = _options.GroupByScope || string.IsNullOrEmpty(commit.Scope)
+            ? string.Empty
+            : $"{commit.Scope}: ";
         string summary = commit.IsBreaking
-            ? $"Breaking Change: <strong>{commit.Subject}</strong>  {commit.Hash}"
-            : $"<strong>{commit.Subject}</strong> {commit.Hash}";
+            ? $"Breaking Change: {scope}<strong>{commit.Subject}</strong>  {commit.Hash}"
+            : $"{scope}<strong>{commit.Subject}</strong> {commit.Hash}";
         string details = string.IsNullOrWhiteSpace(commit.Body) && commit.Footers.Count == 0
             ? "No further information provided..."
             : $"""

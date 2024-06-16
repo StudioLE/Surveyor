@@ -31,7 +31,7 @@ public static class ServiceExtensions
             .AddTransient<IReleaseStreamProvider, ReleaseStreamProvider>()
             .AddTransient<ReleaseNotesActivity>()
             .AddTransient<ConventionalCommitTypeProvider>()
-            .AddTransient<IReleaseNotesFactory, ReleaseNotesByScopeFactory>()
+            .AddTransient<IReleaseNotesFactory, ReleaseNotesFactory>()
             .AddTransient<ReadMeActivity>();
     }
 

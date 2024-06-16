@@ -1,0 +1,132 @@
+## Changes
+
+### New Features
+
+> [!WARNING]
+> <details>
+> <summary>Breaking Change: <strong>allow provided config object to extend other configs</strong>  7a7a7a7a</summary>
+> <br>
+> 
+> `extends` key in config file is now used for extending other config files
+> 
+> ```yaml
+> BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+> ```
+> </details>
+
+### Documentation Improvements
+
+> <details>
+> <summary><strong>correct spelling of CHANGELOG</strong> 6a6a6a6a</summary>
+> <br>
+> 
+> No further information provided...
+> </details>
+
+### Chores
+
+> <details>
+> <summary><strong>Updated dependencies</strong> 4a4a4a4a</summary>
+> <br>
+> 
+> No further information provided...
+> </details>
+
+> <details>
+> <summary><strong>Updated dependencies</strong> 5a5a5a5a</summary>
+> <br>
+> 
+> I have no idea why but lets describe why we're updating the dependencies...
+> </details>
+
+> [!WARNING]
+> <details>
+> <summary>Breaking Change: <strong>drop support for Node 6</strong>  9a9a9a9a</summary>
+> <br>
+> 
+> use JavaScript features not available in Node 6.
+> 
+> ```yaml
+> BREAKING CHANGE: use JavaScript features not available in Node 6.
+> ```
+> </details>
+
+### Other Improvements
+
+> <details>
+> <summary><strong>drop support for Node 6</strong> 8a8a8a8a</summary>
+> <br>
+> 
+> use JavaScript features not available in Node 6.
+> </details>
+
+## StudioLE.Example.Cli
+
+### New Features
+
+> <details>
+> <summary><strong>Added a new features to the CLI</strong> 0a0a0a0a</summary>
+> <br>
+> 
+> No further information provided...
+> </details>
+
+### Bug Fixes
+
+> <details>
+> <summary><strong>prevent racing of requests</strong> 1a1a1a1a</summary>
+> <br>
+> 
+> Introduce a request id and a reference to latest request. Dismiss
+> incoming responses other than from latest request.
+> 
+> Remove timeouts which were used to mitigate the racing issue but are
+> obsolete now.
+> 
+> ```yaml
+> Reviewed-by: Z
+> HELLO-WORLD: This is a
+> multi-line trailer
+> Refs: #123
+> ```
+> </details>
+
+## StudioLE.Example.Core
+
+### Bug Fixes
+
+> <details>
+> <summary><strong>Fixed something in core.</strong> 2a2a2a2a</summary>
+> <br>
+> 
+> Introduce a request id and a reference to latest request. Dismiss
+> incoming responses other than from latest request.
+> 
+> Remove timeouts which were used to mitigate the racing issue but are
+> obsolete now.
+> 
+> ```yaml
+> Reviewed-by: Z
+> HELLO-WORLD: This is a
+> multi-line trailer
+> Refs: #123
+> ```
+> </details>
+
+> <details>
+> <summary><strong>Fixed something else in core.</strong> 3a3a3a3a</summary>
+> <br>
+> 
+> Introduce a request id and a reference to latest request. Dismiss
+> incoming responses other than from latest request.
+> 
+> Remove timeouts which were used to mitigate the racing issue but are
+> obsolete now.
+> 
+> ```yaml
+> Reviewed-by: Z
+> HELLO-WORLD: This is a
+> multi-line trailer
+> Refs: #123
+> ```
+> </details>

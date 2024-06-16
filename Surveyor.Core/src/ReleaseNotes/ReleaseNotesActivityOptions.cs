@@ -15,4 +15,14 @@ public class ReleaseNotesActivityOptions
     /// The name of the branch.
     /// </summary>
     public string Branch { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The name of the branch.
+    /// </summary>
+    public bool GroupByScope { get; set; } = false;
+
+    /// <summary>
+    /// The default section title.
+    /// </summary>
+    public string DefaultSectionTitle { get; set; } = string.Empty;
 }

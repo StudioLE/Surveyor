@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using StudioLE.Diagnostics;
 using StudioLE.Diagnostics.NUnit;
@@ -11,17 +12,21 @@ namespace Surveyor.Core.Tests.Versioning;
 [TestFixture]
 internal class ReleaseNotesFactoryTests
 {
-    private readonly ReleaseNotesByScopeFactory _factory = new(new());
     private readonly IContext _context = new NUnitContext();
 
     [Test]
-    public async Task ReleaseNotesFactory_Create()
+    public async Task ReleaseNotesFactory_Create([Values] bool groupByScope)
     {
         // Arrange
         IReadOnlyCollection<ConventionalCommit> commits = TestHelpers.ExampleCommits();
+        ReleaseNotesActivityOptions options = new()
+        {
+            GroupByScope = groupByScope
+        };
+        ReleaseNotesFactory factory = new(Options.Create(options), new());
 
         // Act
-        string result = _factory.Create(commits);
+        string result = factory.Create(commits);
 
         // Assert
         Assert.That(result, Is.Not.Null);
