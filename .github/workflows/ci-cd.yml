@@ -82,7 +82,7 @@ jobs:
       nuget_username: ${{ github.repository_owner }}
       latest: ${{ github.ref_type == 'branch' && contains(fromJSON('["main"]'), github.ref_name) }}
       source: "*/src/bin/Release/*/Surveyor.*.dll"
-      section: "example"
+      section: "surveyor"
     secrets:
       nuget_password: ${{ secrets.PACKAGES_TOKEN }}
 
