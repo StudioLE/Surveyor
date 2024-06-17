@@ -40,6 +40,73 @@ jobs:
       version: ${{ needs.release.outputs.version }}
     secrets: inherit
 
+  publish-cli-linux:
+    name: Linux CLI
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v5
+    with:
+      project: Surveyor.Cli/src/Surveyor.Cli.csproj
+      runtime: linux-x64
+      npm: ""
+      workload: ""
+      properties: >
+        -p:PublishSingleFile=true
+        -p:IncludeNativeLibrariesForSelfExtract=true
+        -p:SelfContained=false
+        -p:DebugType=embedded
+        -p:GenerateDocumentationFile=false
+      artifact: Cli-Linux
+      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+      nuget_username: ${{ github.repository_owner }}
+    secrets:
+      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
+
+  publish-cli-windows:
+    name: Windows CLI
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v5
+    with:
+      project: Surveyor.Cli/src/Surveyor.Cli.csproj
+      runtime: win-x64
+      npm: ""
+      workload: ""
+      properties: >
+        -p:PublishSingleFile=true
+        -p:IncludeNativeLibrariesForSelfExtract=true
+        -p:SelfContained=false
+        -p:DebugType=embedded
+        -p:GenerateDocumentationFile=false
+      artifact: Cli-Windows
+      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+      nuget_username: ${{ github.repository_owner }}
+    secrets:
+      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
+
+  push-cli-linux:
+    name: Linux Cli
+    needs:
+    - publish-cli-linux
+    - release
+    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v5
+    with:
+      artifact: Cli-Linux
+      name: Surveyor-linux-x64-v${{ needs.release.outputs.version }}
+      file: true
+      version: ${{ needs.release.outputs.version }}
+
+  push-cli-windows:
+    name: Windows Cli
+    needs:
+    - test-windows
+    - publish-cli-windows
+    - release
+    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v5
+    with:
+      artifact: Cli-Windows
+      name: Surveyor-win-x64-v${{ needs.release.outputs.version }}.exe
+      file: true
+      version: ${{ needs.release.outputs.version }}
+
   environment:
     name: Environment
     needs:
@@ -50,3 +117,4 @@ jobs:
     steps:
     - run: |
         echo "Environment: ${{ needs.release.outputs.environment }}"
+
