@@ -6,7 +6,7 @@ namespace Surveyor.Versioning;
 public readonly struct ReleaseStream()
 {
     /// <summary>
-    /// The unique identifier.
+    /// The identifier used for pre-release.
     /// </summary>
     public string Id { get; init; } = string.Empty;
 

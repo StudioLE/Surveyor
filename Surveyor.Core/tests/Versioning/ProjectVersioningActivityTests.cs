@@ -39,7 +39,7 @@ internal sealed class ProjectVersioningActivityTests
         Assert.That(version, Is.Not.Null);
     }
 
-    [TestCase(ReleaseType.Patch, "main", "1.2.4")]
+    [TestCase(ReleaseType.Patch, "release", "1.2.4")]
     [TestCase(ReleaseType.Patch, "alpha", "1.2.4-alpha.4")]
     [TestCase(ReleaseType.Patch, "beta", "1.2.4-beta.1")]
     [TestCase(ReleaseType.Patch, "rc", "1.2.4-rc.1")]
@@ -47,8 +47,8 @@ internal sealed class ProjectVersioningActivityTests
     // [TestCase(ReleaseType.Patch, "v2.2", null)]
     // [TestCase(ReleaseType.Patch, "v3", "3.0.0")]
     [TestCase(ReleaseType.Patch, "wip", null)]
-    [TestCase(ReleaseType.Minor, "main", "1.4.0")]
-    [TestCase(ReleaseType.Major, "main", "3.0.0")]
+    [TestCase(ReleaseType.Minor, "release", "1.4.0")]
+    [TestCase(ReleaseType.Major, "release", "3.0.0")]
     public async Task ProjectVersioningActivity_Execute(ReleaseType releaseType, string branchName, string? expected)
     {
         // Arrange
@@ -208,7 +208,7 @@ internal sealed class ProjectVersioningActivityTests
         ReleaseStreamProvider releaseStreamProvider = new();
         MockReleaseTypeStrategy releaseTypeStrategy = new(ReleaseType.Patch);
         VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
-        options.Branch = "main";
+        options.Branch = "release";
         options.Directory = Path.GetTempPath();
         options.Package = "StudioLE.Example";
         GitCli git = new(new GitCliOptions

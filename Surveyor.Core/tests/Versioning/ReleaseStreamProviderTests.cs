@@ -8,7 +8,8 @@ internal class ReleaseStreamProviderTests
 {
     [TestCase("alpha", "alpha")]
     [TestCase("beta", "beta")]
-    [TestCase("main", "main")]
+    [TestCase("main", "alpha")]
+    [TestCase("release", "release")]
     [TestCase("v1", "major")]
     [TestCase("v1.2", "minor")]
     [TestCase("v1.2.3", "patch")]

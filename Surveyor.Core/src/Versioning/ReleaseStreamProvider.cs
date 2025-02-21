@@ -66,9 +66,15 @@ public class ReleaseStreamProvider : IReleaseStreamProvider
         {
             new()
             {
-                Id = "main",
-                BranchName = "main",
+                Id = "release",
+                BranchName = "release",
                 IsPrimary = true
+            },
+            new()
+            {
+                Id = "alpha",
+                BranchName = "main",
+                IsPreRelease = true
             },
             new()
             {
