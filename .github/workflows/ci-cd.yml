@@ -141,11 +141,11 @@ jobs:
     with:
       project: ""
       version: ${{ needs.release.outputs.version }}
-      nuget_feed: https://api.nuget.org/v3/index.json
+      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       nuget_username: ${{ github.repository_owner }}
       target_nuget_feed: https://api.nuget.org/v3/index.json
     secrets:
-      nuget_password: ${{ secrets.NUGET_TOKEN }}
+      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
       target_nuget_api_key: ${{ secrets.NUGET_TOKEN }}
 
   push-cli-linux:
