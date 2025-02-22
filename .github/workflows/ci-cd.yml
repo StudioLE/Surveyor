@@ -7,7 +7,7 @@ jobs:
 
   test-ubuntu:
     name: Ubuntu
-    uses: StudioLE/Actions/.github/workflows/dotnet-test.yml@v5
+    uses: StudioLE/Actions/.github/workflows/dotnet-test.yml@v6
     with:
       project: ""
       os: ubuntu-latest
@@ -19,8 +19,8 @@ jobs:
 
   test-windows:
     name: Windows
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/dotnet-test.yml@v5
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta", "release"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/dotnet-test.yml@v6
     with:
       project: ""
       os: windows-latest
@@ -31,8 +31,8 @@ jobs:
 
   publish-cli-linux:
     name: Linux CLI
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v5
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta", "release"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v6
     with:
       project: Surveyor.Cli/src/Surveyor.Cli.csproj
       runtime: linux-x64
@@ -52,8 +52,8 @@ jobs:
 
   publish-cli-windows:
     name: Windows CLI
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v5
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta", "release"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/dotnet-publish.yml@v6
     with:
       project: Surveyor.Cli/src/Surveyor.Cli.csproj
       runtime: win-x64
@@ -73,14 +73,14 @@ jobs:
 
   documentation:
     name: Documentation
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "beta", "alpha"]'), github.ref_name) }}
-    uses: StudioLE/Actions/.github/workflows/illuminate-generate.yml@v5
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta", "release"]'), github.ref_name) }}
+    uses: StudioLE/Actions/.github/workflows/illuminate-generate.yml@v6
     with:
       project: ""
       os: ubuntu-latest
       nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       nuget_username: ${{ github.repository_owner }}
-      latest: ${{ github.ref_type == 'branch' && contains(fromJSON('["main"]'), github.ref_name) }}
+      latest: ${{ github.ref_type == 'branch' && github.ref_name == 'release' }}
       source: "*/src/bin/Release/*/Surveyor.*.dll"
       section: "surveyor"
     secrets:
@@ -88,10 +88,10 @@ jobs:
 
   release:
     name: Release
-    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta"]'), github.ref_name) }}
+    if: ${{ github.ref_type == 'branch' && contains(fromJSON('["main", "alpha", "beta", "release"]'), github.ref_name) }}
     needs:
     - test-ubuntu
-    uses: StudioLE/Actions/.github/workflows/surveyor-release.yml@v5
+    uses: StudioLE/Actions/.github/workflows/surveyor-release.yml@v6
     with:
       nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       nuget_username: ${{ github.repository_owner }}
@@ -103,7 +103,7 @@ jobs:
     if: ${{ always() }}
     needs:
     - test-ubuntu
-    uses: StudioLE/Actions/.github/workflows/push-to-repo.yml@v5
+    uses: StudioLE/Actions/.github/workflows/push-to-repo.yml@v6
     with:
       repo: StudioLE/Tests
       artifact: Tests-Linux-X64
@@ -113,23 +113,29 @@ jobs:
     secrets:
       repo_token: ${{ secrets.TESTS_TOKEN }}
 
-  push-packages:
-    name: Packages
+  push-packages-github:
+    name: GitHub Packages
     needs:
     - release
-    # Note: v3 push is required as Surveyor can't use Surveyor.BuildVersioning due to circular reference
-    uses: StudioLE/Actions/.github/workflows/03-push.yml@v3
+    # Surveyor can't use Surveyor.BuildVersioning due to circular reference
+    # so the package must be explicitly built with the version number
+    uses: StudioLE/Actions/.github/workflows/push-to-nuget-with-rebuild.yml@v6
     with:
       project: ""
       version: ${{ needs.release.outputs.version }}
-    secrets: inherit
+      nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+      nuget_username: ${{ github.repository_owner }}
+      target_nuget_feed: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+    secrets:
+      nuget_password: ${{ secrets.PACKAGES_TOKEN }}
+      target_nuget_api_key: ${{ secrets.GITHUB_TOKEN }}
 
   push-cli-linux:
     name: Linux Cli
     needs:
     - publish-cli-linux
     - release
-    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v5
+    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v6
     with:
       artifact: Cli-Linux
       name: Surveyor-linux-x64-v${{ needs.release.outputs.version }}
@@ -142,7 +148,7 @@ jobs:
     - test-windows
     - publish-cli-windows
     - release
-    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v5
+    uses: StudioLE/Actions/.github/workflows/push-to-github-releases.yml@v6
     with:
       artifact: Cli-Windows
       name: Surveyor-win-x64-v${{ needs.release.outputs.version }}.exe
@@ -154,7 +160,7 @@ jobs:
     needs:
     - documentation
     - release
-    uses: StudioLE/Actions/.github/workflows/push-to-repo.yml@v5
+    uses: StudioLE/Actions/.github/workflows/push-to-repo.yml@v6
     with:
       repo: StudioLE/Documentation
       artifact: Documentation
