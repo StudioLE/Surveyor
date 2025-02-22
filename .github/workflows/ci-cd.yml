@@ -130,6 +130,24 @@ jobs:
       nuget_password: ${{ secrets.PACKAGES_TOKEN }}
       target_nuget_api_key: ${{ secrets.GITHUB_TOKEN }}
 
+  push-packages-nuget:
+    name: NuGet Packages
+    if: ${{ ! contains(needs.release.outputs.version, '-') }}
+    needs:
+    - release
+    # Surveyor can't use Surveyor.BuildVersioning due to circular reference
+    # so the package must be explicitly built with the version number
+    uses: StudioLE/Actions/.github/workflows/push-to-nuget-with-rebuild.yml@v6
+    with:
+      project: ""
+      version: ${{ needs.release.outputs.version }}
+      nuget_feed: https://api.nuget.org/v3/index.json
+      nuget_username: ${{ github.repository_owner }}
+      target_nuget_feed: https://api.nuget.org/v3/index.json
+    secrets:
+      nuget_password: ${{ secrets.NUGET_TOKEN }}
+      target_nuget_api_key: ${{ secrets.NUGET_TOKEN }}
+
   push-cli-linux:
     name: Linux Cli
     needs:
