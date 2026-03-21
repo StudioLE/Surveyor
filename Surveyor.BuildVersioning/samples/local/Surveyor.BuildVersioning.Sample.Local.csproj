@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <SurveyorBranch>alpha</SurveyorBranch>
+    <SurveyorBranch>main</SurveyorBranch>
     <SurveyorAssemblyPath>../../src/bin/$(Configuration)/netstandard2.0/Surveyor.BuildVersioning.dll</SurveyorAssemblyPath>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);SurveyorBuildVersioning</GetPackageVersionDependsOn>
   </PropertyGroup>
