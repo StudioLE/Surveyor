@@ -246,6 +246,50 @@ internal sealed class RepositoryVersioningActivityTests
         Assert.That(version.ToString(), Is.EqualTo("0.1.2"));
     }
 
+    [TestCase(ReleaseType.Patch, "main", "0.0.0-alpha.3")]
+    [TestCase(ReleaseType.Patch, "release", "0.0.0")]
+    [TestCase(ReleaseType.Minor, "main", "0.0.0-alpha.3")]
+    [TestCase(ReleaseType.Minor, "release", "0.0.0")]
+    public void RepositoryVersioningActivity_Execute_OnlyPreReleaseTags(ReleaseType releaseType, string branchName, string expected)
+    {
+        // Arrange
+        ILogger<RepositoryVersioningActivity> logger = _services.GetRequiredService<ILogger<RepositoryVersioningActivity>>();
+        MockRepositoryVersionProvider repositoryVersionProvider = new(CreateVersions([
+            "0.0.0-alpha.1",
+            "0.0.0-alpha.2"
+        ]));
+        MockBranchVersionProvider branchVersionProvider = new(CreateVersions([
+            "0.0.0-alpha.1",
+            "0.0.0-alpha.2"
+        ]));
+        MockHeadVersionProvider headVersionProvider = new([]);
+        ReleaseStreamProvider releaseStreamProvider = new();
+        MockReleaseTypeStrategy releaseTypeStrategy = new(releaseType);
+        VersioningActivityOptions options = _services.GetRequiredService<IOptions<VersioningActivityOptions>>().Value;
+        options.Branch = branchName;
+        options.Directory = Path.GetTempPath();
+        options.Package = string.Empty;
+        GitCli git = new(new GitCliOptions
+        {
+            Directory = options.Directory,
+            SkipValidation = true
+        });
+        RepositoryVersioningActivity activity = new(
+            logger,
+            git,
+            repositoryVersionProvider,
+            branchVersionProvider,
+            headVersionProvider,
+            releaseTypeStrategy,
+            releaseStreamProvider);
+
+        // Act
+        SemanticVersion? version = activity.Execute(options);
+
+        // Assert
+        Assert.That(version.ToString(), Is.EqualTo(expected));
+    }
+
     private static SemanticVersion[] CreateVersions(string[] versions)
     {
         return versions

@@ -76,9 +76,9 @@ public class RepositoryVersioningActivity
             .ToArray();
         SemanticVersion? latestFullVersionOnBranch = branchVersions.FirstOrNull(x => !x.IsPreRelease());
         _logger.LogDebug($"Last version on branch: {latestFullVersionOnBranch}.");
-        ReleaseType releaseType = branchVersions.Count == 0
-            ? _releaseTypeStrategy.Get()
-            : _releaseTypeStrategy.Get(latestFullVersionOnBranch!.Value);
+        ReleaseType releaseType = latestFullVersionOnBranch.HasValue
+            ? _releaseTypeStrategy.Get(latestFullVersionOnBranch.Value)
+            : _releaseTypeStrategy.Get();
         _logger.LogDebug($"Release type: {releaseType}.");
         IReadOnlyCollection<SemanticVersion> repositoryVersions = _repositoryVersionProvider.Get();
         IReadOnlyCollection<SemanticVersion> headVersions = _headVersionProvider.Get(options.Branch);
