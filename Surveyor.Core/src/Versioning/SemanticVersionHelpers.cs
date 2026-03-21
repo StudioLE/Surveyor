@@ -128,6 +128,7 @@ public static class SemanticVersionHelpers
             return CreatePreRelease(version, preReleaseId);
         bool isComplete = false;
         string[] updatedComponents = components
+            .AsEnumerable()
             .Reverse()
             .Select(str =>
             {

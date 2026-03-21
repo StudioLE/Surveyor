@@ -42,7 +42,7 @@ public class ConventionalCommitParser
             isBreaking = true;
         body = string.Empty;
         Dictionary<string, string> footers = new();
-        foreach (string line in bodyLines.Reverse())
+        foreach (string line in bodyLines.AsEnumerable().Reverse())
         {
             Regex trailerRegex = new(@"^([a-zA-Z0-9_-]+):[ \t]*(.+)$");
             Match trailerMatch = trailerRegex.Match(line);
