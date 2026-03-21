@@ -66,16 +66,16 @@ public class Program
         ReleaseNotesActivity activity = services.GetRequiredService<ReleaseNotesActivity>();
         IOptions<ReleaseNotesActivityOptions> options = services.GetRequiredService<IOptions<ReleaseNotesActivityOptions>>();
         string releaseNotes = activity.Execute(options.Value);
-        if (!string.IsNullOrEmpty(releaseNotes))
-        {
-            Console.WriteLine(releaseNotes);
-            Environment.Exit(0);
-        }
-        else
+        if (releaseNotes is null)
         {
             Console.Error.WriteLine("Failed to produce release notes.");
             Environment.Exit(1);
         }
+        else if (releaseNotes.Length > 0)
+        {
+            Console.WriteLine(releaseNotes);
+        }
+        Environment.Exit(0);
         return Task.CompletedTask;
     }
 

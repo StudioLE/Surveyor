@@ -32,4 +32,19 @@ internal class ReleaseNotesFactoryTests
         Assert.That(result, Is.Not.Null);
         await _context.Verify(result);
     }
+
+    [Test]
+    public void ReleaseNotesFactory_Create_NoCommits()
+    {
+        // Arrange
+        IReadOnlyCollection<ConventionalCommit> commits = Array.Empty<ConventionalCommit>();
+        ReleaseNotesActivityOptions options = new();
+        ReleaseNotesFactory factory = new(Options.Create(options), new());
+
+        // Act
+        string result = factory.Create(commits);
+
+        // Assert
+        Assert.That(result, Is.Empty);
+    }
 }
